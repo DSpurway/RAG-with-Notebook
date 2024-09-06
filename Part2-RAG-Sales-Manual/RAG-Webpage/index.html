@@ -3,6 +3,28 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <script
+      type="module"
+      src="https://1.www.s81c.com/common/carbon/web-components/tag/v2/latest/button.min.js"></script>
+    <style type="text/css">
+      // Suppresses the custom element until it has been defined
+      cds-button:not(:defined),
+      cds-button-item:not(:defined) {
+        visibility: hidden;
+      }
+    </style>
+
+    <script
+      type="module"
+      src="https://1.www.s81c.com/common/carbon/web-components/tag/v2/latest/dropdown.min.js"></script>
+    <style type="text/css">
+      // Suppresses the custom element until it has been defined
+      cds-dropdown:not(:defined),
+      cds-dropdown-item:not(:defined) {
+        visibility: hidden;
+      }
+    </style>
+    
     <title>GenAI with Sales Manuals Demo Page</title>
   </head>
   <body>
@@ -12,7 +34,7 @@
     <p>For this, we are using the Techzone environment "OpenShift on POWER10 - Bastion, 1 Master with NFS Storage".</p>
 
     <h2>List Collections which can be used for Retrieval Augmented Generation at this time</h2>
-    <button onclick="myRAG_list_collections_func()">Click to List Collections for RAG</button>
+    <cds-button onclick="myRAG_list_collections_func()">Click to List Collections for RAG</button>
     <p id="RAG_list_collections_id"></p>
 
     <script>
@@ -87,13 +109,15 @@
 
     <h2>Set Questions and Server Name and retrieve data from the Vector DB, so we can use is as part of our prompt for Retrieval Augmented Generation</h2>
     <p>Pick a Server Name to ask our questions about. We can then use the metadata saved with the Sales Manual information to get chunks only from the relivant Sales Manual that was stored.</p>
-    <select id="Server_Name">
-      <option value="IBM_Power_S1012">IBM Power S1012</option>
-      <option value="IBM_Power_S1014">IBM Power S1014</option>
-      <option value="IBM_Power_S1022">IBM Power S1022</option>
-      <option value="IBM_Power_S1022s">IBM Power S1022s</option>
-      <option value="IBM_Power_S1024">IBM Power S1024</option>
-    </select>
+    <div id="Server_Name">
+      <cds-dropdown trigger-content="Select an IBM Power server">
+        <cds-dropdown-item value="IBM_Power_S1012">IBM Power S1012</cds-dropdown-item>
+        <cds-dropdown-item value="IBM_Power_S1014">IBM Power S1014</cds-dropdown-item>
+        <cds-dropdown-item value="IBM_Power_S1022">IBM Power S1022</cds-dropdown-item>
+        <cds-dropdown-item value="IBM_Power_S1022s">IBM Power S1022s</cds-dropdown-item>
+        <cds-dropdown-item value="IBM_Power_S1024">IBM Power S1024</cds-dropdown-item>
+      </cds-dropdown>
+    </div>
     
     <div>
     <label for="Question">Question:</label>
