@@ -5,6 +5,7 @@ from langchain.document_loaders import WebBaseLoader, PyPDFLoader
 from langchain.text_splitter import CharacterTextSplitter
 from flask import Flask, request
 from flask_cors import CORS, cross_origin
+import requests
 import os
 import logging
 
