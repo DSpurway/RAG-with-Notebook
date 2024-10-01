@@ -28,7 +28,7 @@ def index():
 
         FNAME = "IBM_Annual_Report_2023.pdf"
 
-        res = requests.get('Report_URL')
+        res = requests.get(Report_URL)
         with open(FNAME, 'wb') as file:
             file.write(res.content)
         
