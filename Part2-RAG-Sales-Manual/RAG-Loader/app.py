@@ -21,17 +21,21 @@ if __name__ != '__main__':
 def index():
     content = {}
 
-    if request.args.get('Server_Name'):
-        Server_Name = request.args.get('Server_Name')
-        app.logger.info('Found Server_Name '+Server_Name)
+    if request.args.get('Report_URL'):
+        Report_URL = request.args.get('Report_URL')
+        app.logger.info('Found Report URL '+Report_URL)
+
+        FNAME = "IBM_Annual_Report_2023.pdf"
+
+        res = requests.get('Report_URL')
+        with open(FNAME, 'wb') as file:
+            file.write(res.content)
         
         MILVUS_HOST="milvus-service"
         MILVUS_PORT="19530"
 
         connections.connect(host=MILVUS_HOST, port=MILVUS_PORT)
         app.logger.info('Connected to Milvus Host '+MILVUS_HOST)
-        
-        FNAME = Server_Name+".pdf"
         
         loader = PyPDFLoader(FNAME)
         app.logger.info('Loading file '+FNAME)
@@ -50,7 +54,7 @@ def index():
         vector_store = Milvus.from_documents(
             docs,
             embedding=embeddings,
-            collection_name="sales_manuals",
+            collection_name="annual_reports",
             connection_args={"host": MILVUS_HOST, "port": MILVUS_PORT}
         )
         app.logger.info('Completed vector store')
