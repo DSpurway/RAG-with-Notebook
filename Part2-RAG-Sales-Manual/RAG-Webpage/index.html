@@ -57,9 +57,9 @@ Assisted by WCA@IBM // Latest GenAI contribution: ibm/granite-20b-code-instruct-
         }
       </script>
     </details>
-    
-    <button type="button" class="collapsible">Load Documents</button>
-    <DIV class="content">
+
+    <details>
+      <summary>Click to load documents</summary>
     
       <h2>Load pre-saved Sales Manual PDF documents into the Vector DB so the data to be used for Retrieval Augmented Generation</h2>
         <button id="IBM_Power_S1012" onclick="myRAG_loader_func('IBM_Power_S1012')">Load IBM Power S1012 Sales Manual</button>
@@ -114,7 +114,10 @@ Assisted by WCA@IBM // Latest GenAI contribution: ibm/granite-20b-code-instruct-
           });
       }
     </script>
-    </DIV>
+  </details>
+
+  <details>
+    <summary>Click to build prompt for questions about servers</summary>
     
     <h2>Set Questions and Server Name and retrieve data from the Vector DB, so we can use is as part of our prompt for Retrieval Augmented Generation</h2>
     <p>Pick a Server Name to ask our questions about. We can then use the metadata saved with the Sales Manual information to get chunks only from the relivant Sales Manual that was stored.</p>
@@ -184,6 +187,10 @@ Assisted by WCA@IBM // Latest GenAI contribution: ibm/granite-20b-code-instruct-
           });
       }
     </script>
+    </details>
+
+    <details>
+    <summary>Click to build prompt for questions about reports</summary>
     
     <h2>Set Questions and Report Name and retrieve data from the Vector DB, so we can use is as part of our prompt for Retrieval Augmented Generation</h2>
     <p>Pick a Report Name to ask our questions about. We can then use the metadata saved with the information to get chunks only from the relivant report that was stored.</p>
@@ -254,6 +261,10 @@ Assisted by WCA@IBM // Latest GenAI contribution: ibm/granite-20b-code-instruct-
           });
       }
     </script>
+    </details>
+
+    <details>
+    <summary>Click to edit prompt</summary>
 
     <h2>Build the prompt with the data retrieved and pass that to the LLM</h2>
     <p>Edit the prompt as needed, the press the button to pass the question to the LLM, which can take a little while to come back...</p>
@@ -302,7 +313,9 @@ Assisted by WCA@IBM // Latest GenAI contribution: ibm/granite-20b-code-instruct-
               .insertAdjacentHTML("beforeend", `<p>${Prompt}</p>`);
         }
       </script>
-
+      </details>
+  <details>
+    <summary>Click to send prompt to LLM</summary>
     <button onclick="myRAG_send_prompt_func()">Send the prompt to the LLM</button><br><br>
 
     <p id="RAG_send_prompt_id"></p>
@@ -330,6 +343,7 @@ Assisted by WCA@IBM // Latest GenAI contribution: ibm/granite-20b-code-instruct-
           });
       }
     </script>
+    </details>
 
   </body>
 </html>
