@@ -3,33 +3,6 @@ Assisted by WCA@IBM // Latest GenAI contribution: ibm/granite-20b-code-instruct-
 <html>
   <head>
     <title>GenAI with PDF Docs Demo Page</title>
-
-    /* Style the button that is used to open and close the collapsible content */
-.collapsible {
-  background-color: #eee;
-  color: #444;
-  cursor: pointer;
-  padding: 18px;
-  width: 100%;
-  border: none;
-  text-align: left;
-  outline: none;
-  font-size: 15px;
-}
-
-/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
-.active, .collapsible:hover {
-  background-color: #ccc;
-}
-
-/* Style the collapsible content. Note: hidden by default */
-.content {
-  padding: 0 18px;
-  display: none;
-  overflow: hidden;
-  background-color: #f1f1f1;
-}
-    
   </head>
       
   <body>
@@ -37,8 +10,10 @@ Assisted by WCA@IBM // Latest GenAI contribution: ibm/granite-20b-code-instruct-
     <h2>Introduction</h2>
     <p>This is a simple Flask web page, which is built to link to the different stages of the demo David Spurway built to show GenAI using Sales Manual and Report PDF documents, running on Red Hat OpenShift Container Platform on IBM Power.</p> 
     <p>For this, we are using the Techzone environment "OpenShift on POWER10 - Bastion, 1 Master with NFS Storage".</p>
-    <button type="button" class="collapsible">Work with Collections</button>
-      <DIV class="content">
+
+    <details>
+        <summary>Click to work with Collections</summary>
+
       <h2>List Collections which can be used for Retrieval Augmented Generation at this time</h2>
       <button onclick="myRAG_list_collections_func()">Click to List Collections for RAG</button>
       <p id="RAG_list_collections_id"></p>
@@ -81,7 +56,7 @@ Assisted by WCA@IBM // Latest GenAI contribution: ibm/granite-20b-code-instruct-
             });
         }
       </script>
-    </DIV>
+    </details>
     
     <button type="button" class="collapsible">Load Documents</button>
     <DIV class="content">
