@@ -5,11 +5,9 @@ WORKDIR /api-flask
 
 # Copy the necessary files and directories into the container
 COPY app.py requirements.txt /api-flask/
-# COPY IBM_Power_S1012.pdf /api-flask/
-# COPY IBM_Power_S1014.pdf /api-flask/
-# COPY IBM_Power_S1022.pdf /api-flask/
-# COPY IBM_Power_S1022s.pdf /api-flask/
-# COPY IBM_Power_S1024.pdf /api-flask/
+COPY IBM_Annual_Report_2023.pdf /api-flask/
+COPY Barclays_PLC_Annual_Report_2023.pdf /api-flask/
+COPY 2023_IBM_ESG_Report.pdf /api-flask/
 
 # Upgrade pip and install Python dependencies
 RUN pip3 install --upgrade pip
