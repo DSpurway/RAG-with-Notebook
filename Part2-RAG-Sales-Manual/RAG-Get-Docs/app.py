@@ -39,7 +39,7 @@ def index():
 
         vector_store = Milvus(
             embedding_function=embeddings,
-            collection_name="reports",
+            collection_name="annual_reports",
             connection_args={"host": MILVUS_HOST, "port": MILVUS_PORT}
         )
 
