@@ -8,7 +8,7 @@ import os
 import logging
 
 app = Flask(__name__)
-CORS(app, origins=["https://rag-webpage-llm-on-techzone.apps.p1273.cecc.ihost.com"]) 
+CORS(app, origins=["https://rag-webpage-llm-on-techzone.apps.p1293.cecc.ihost.com"]) 
 
 app = Flask(__name__)
 
@@ -22,9 +22,9 @@ if __name__ != '__main__':
 def index():
     content = {}
 
-    if request.args.get('Server_Name','Question'):
-        Server_Name = request.args.get('Server_Name')
-        app.logger.info('Found Server_Name '+Server_Name)
+    if request.args.get('Report_Name','Question'):
+        Report_Name = request.args.get('Report_Name')
+        app.logger.info('Found Report_Name '+Report_Name)
 
         Question = request.args.get('Question')
         app.logger.info('Found Question '+Question)
@@ -39,11 +39,11 @@ def index():
 
         vector_store = Milvus(
             embedding_function=embeddings,
-            collection_name="sales_manuals",
+            collection_name="reports",
             connection_args={"host": MILVUS_HOST, "port": MILVUS_PORT}
         )
 
-        FNAME = Server_Name+".pdf"
+        FNAME = Report_Name+".pdf"
 
         app.logger.info('Using this question to retrieve docs: '+Question)
 
@@ -53,7 +53,7 @@ def index():
         content['result'] = "Success"
         content['docs'] = dumps(docs)
     else:
-        content ['result'] = "Server Name or Question Missing"
+        content ['result'] = "Report Name or Question Missing"
 
     app.logger.info('Returning '+str(content))
     return content
