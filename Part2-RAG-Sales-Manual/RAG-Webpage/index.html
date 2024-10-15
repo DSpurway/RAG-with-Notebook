@@ -228,6 +228,11 @@ rt// Assisted by WCA@IBM
               // Extract the text between "page_content" and "type"
               chunk_contents += "<p>Chunk contents:</p>";
               chunk_contents += input_string.slice(pageContentIndex + "page_content".length +6, typeIndex -6);
+              chunk_contents = chunk_contents.replaceAll("\\\\u2013","");
+              chunk_contents = chunk_contents.replaceAll("\\\\u2014","");
+              chunk_contents = chunk_contents.replaceAll("\\\\u201c","");
+              chunk_contents = chunk_contents.replaceAll("\\\\u201d","");
+              chunk_contents = chunk_contents.replaceAll("\\\\u2019s","");
               chunk_contents = chunk_contents.replaceAll("\\\\n"," ");
               // chunk_contents = chunk_contents.replaceAll(/\\/g,"");
               
