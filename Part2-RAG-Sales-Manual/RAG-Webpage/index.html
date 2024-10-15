@@ -17,7 +17,7 @@
 
     <script>
       function myRAG_list_collections_func() {
-        fetch("https://rag-list-collections-llm-on-techzone.apps.p1273.cecc.ihost.com/")
+        fetch("https://rag-list-collections-llm-on-techzone.apps.p1293.cecc.ihost.com/")
           .then(response => response.json())
           .then(data => {
             console.log(data);
@@ -42,7 +42,7 @@
     <script>
       function myRAG_drop_collections_func() {
         var collectionName = document.getElementById("collection").value;
-        fetch("https://rag-drop-collection-llm-on-techzone.apps.p1273.cecc.ihost.com/?Collection=" + collectionName)
+        fetch("https://rag-drop-collection-llm-on-techzone.apps.p1293.cecc.ihost.com/?Collection=" + collectionName)
           .then(response => response.json())
           .then(data => {
             console.log(data);
@@ -70,12 +70,12 @@
     <script>
       function myRAG_loader_func(Server_Name) {
         document.getElementById(Server_Name).innerHTML = "Loading " + Server_Name + ".pdf. This takes a few minutes.";
-        fetch("https://rag-loader-llm-on-techzone.apps.p1273.cecc.ihost.com/?Server_Name=" + Server_Name, { signal: AbortSignal.timeout(500000) })
+        fetch("https://rag-loader-llm-on-techzone.apps.p1293.cecc.ihost.com/?Server_Name=" + Server_Name, { signal: AbortSignal.timeout(500000) })
           .then(response => response.json())
           .then(data => {
             console.log(data);
             document
-              .getElementById("RAG_loader_id")
+              .getElementById("RAG_loader_server_name_id")
               .insertAdjacentHTML("beforeend", `<p>${data.result}</p>`);
             document.getElementById(Server_Name).innerHTML = "&#10003;";
           })
@@ -97,7 +97,7 @@
     
     <div>
     <label for="Question">Question:</label>
-    <input type="text" id="Question" name="Question" value="How many dual-chip processor modules in the server?"><br>
+    <input type="text" id="Question" name="Question" value="How many dual-chip processors in the server?" size="60"><br>
     </div>
     <button onclick="myRAG_get_docs_func()">Pick a server from the list above, edit the question if desired, then click to retrieve data to answer the question</button><br><br>
 
@@ -109,7 +109,7 @@
         
         var Server_Name = document.getElementById("Server_Name").value;
         var Question = document.getElementById("Question").value;
-        fetch("https://rag-get-docs-llm-on-techzone.apps.p1273.cecc.ihost.com/?Server_Name=" + Server_Name +"&Question=\"" +Question +"\"")
+        fetch("https://rag-get-docs-llm-on-techzone.apps.p1293.cecc.ihost.com/?Server_Name=" + Server_Name +"&Question=\"" +Question +"\"")
           .then(response => response.json())
           .then(data => {
             console.log(data.result);
@@ -153,12 +153,104 @@
           });
       }
     </script>
+    
+    <h2>Load pre-saved Annual Report PDF documents into the Vector DB so the data to be used for Retrieval Augmented Generation</h2>
+    <div>
+      <button id="IBM_Power_S1012" onclick="myRAG_report_loader_func('IBM_Annual_Report_2023')">Load IBM Annual Report 2023</button>
+      <button id="IBM_Power_S1014" onclick="myRAG_report_loader_func('2023_IBM_ESG_Report')">Load IBM ESG Report 2023</button>
+      <button id="IBM_Power_S1022" onclick="myRAG_report_loader_func('Barclays_PLC_Annual_Report_2023')">Load Barclays PLC Annual Report 2023</button>
+    </div>
+    
+    <p id="RAG_loader_report_name_id"></p>
+    
+    <script>
+      function myRAG_report_loader_func(Report_Name) {
+        document.getElementById(Report_Name).innerHTML = "Loading " + Report_Name + ".pdf. This takes a few minutes.";
+        fetch("https://rag-report-loader-llm-on-techzone.apps.p1293.cecc.ihost.com/?Report_Name=" + Report_Name, { signal: AbortSignal.timeout(500000) })
+          .then(response => response.json())
+          .then(data => {
+            console.log(data);
+            document
+              .getElementById("RAG_loader_id")
+              .insertAdjacentHTML("beforeend", `<p>${data.result}</p>`);
+            document.getElementById(Report_Name).innerHTML = "&#10003;";
+          })
+          .catch(error => {
+            console.error("Error fetching data:", error);
+          });
+      }
+    </script>
+    
+    <h2>Set Questions and Report Name and retrieve data from the Vector DB, so we can use is as part of our prompt for Retrieval Augmented Generation</h2>
+    <p>Pick a Report Name to ask our questions about. We can then use the metadata saved with the information to get chunks only from the relivant report that was stored.</p>
+    <select id="Report_Name">
+      <option value="IBM_Annual_Report_2023">IBM Annual Report 2023</option>
+      <option value="2023_IBM_ESG_Report">IBM ESG Report 2023</option>
+      <option value="Barclays_PLC_Annual_Report_2023">Barclays PLC Annual Report 2023</option>
+    </select>
+    
+    <div>
+    <label for="Question">Question:</label>
+    <input type="text" id="Question" name="Question" value="What were the revenue results for the company?" size="60"><br>
+    </div>
+    <button onclick="myRAG_get_report_docs_func()">Pick a report from the list above, edit the question if desired, then click to retrieve data to answer the question</button><br><br>
+
+    <p id="RAG_get_report_docs_id"></p>
+
+    <script>
+      var chunk_contents;
+      function myRAG_get_report_docs_func() {
+        
+        var Server_Name = document.getElementById("Report_Name").value;
+        var Question = document.getElementById("Question").value;
+        fetch("https://rag-get-report-docs-llm-on-techzone.apps.p1293.cecc.ihost.com/?Report_Name=" + Report_Name +"&Question=\"" +Question +"\"")
+          .then(response => response.json())
+          .then(data => {
+            console.log(data.result);
+            console.log(data.docs);
+            const input_string = JSON.stringify(data.docs);
+            console.log(input_string);
+            
+            // Find all instances of "page_content"
+            const pageContentIndices = [];
+            let index = input_string.indexOf("page_content")
+              console.log(index);
+            while (index !== -1) {
+              pageContentIndices.push(index);
+              index = input_string.indexOf("page_content", index + 1);
+            }
+            chunk_contents = "";
+            // Repeat for each instance of "page_content"
+            for (const pageContentIndex of pageContentIndices) {
+              // Find the index of "type" after "page_content"
+              const typeIndex = input_string.indexOf("type", pageContentIndex + "page_content".length);
+              
+              // Extract the text between "page_content" and "type"
+              chunk_contents += "<p>Chunk contents:</p>";
+              chunk_contents += input_string.slice(pageContentIndex + "page_content".length +6, typeIndex -6);
+              chunk_contents = chunk_contents.replaceAll("\\\\n"," ");
+              // chunk_contents = chunk_contents.replaceAll(/\\/g,"");
+              
+              // Print the extracted text
+              console.log(chunk_contents);
+            }
+
+            console.log(chunk_contents);
+            document
+              .getElementById("RAG_get_report_docs_id")
+              .insertAdjacentHTML("beforeend", `<p id="RAG_chunk_contents_id">${chunk_contents}</p>`);
+          })
+          .catch(error => {
+            console.error("Error fetching data:", error);
+          });
+      }
+    </script>
 
     <h2>Build the prompt with the data retrieved and pass that to the LLM</h2>
     <p>Edit the prompt as needed, the press the button to pass the question to the LLM, which can take a little while to come back...</p>
     <div>
     <label for="Question_for_LLM">Question for LLM:</label>
-    <input type="text" id="Question_for_LLM" name="Question_for_LLM" value="How many processor sockets can the server have installed?"><br>
+    <input type="text" id="Question_for_LLM" name="Question_for_LLM" value="How many processor sockets can the server have installed?" size="70"><br>
     </div>
 
     <script>
@@ -200,7 +292,7 @@
     <script>
       function myRAG_send_prompt_func() {
         console.log(Prompt);
-        fetch("https://rag-prompt-llm-llm-on-techzone.apps.p1273.cecc.ihost.com", {
+        fetch("https://rag-prompt-llm-llm-on-techzone.apps.p1293.cecc.ihost.com", {
           method: "POST",
           timeout: 60,
           body: JSON.stringify(Prompt),
