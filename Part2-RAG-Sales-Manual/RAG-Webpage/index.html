@@ -3,27 +3,6 @@ Assisted by WCA@IBM // Latest GenAI contribution: ibm/granite-20b-code-instruct-
 <html>
   <head>
     <title>GenAI with PDF Docs Demo Page</title>
-    <FORM STYLE="padding-left:5px">
-    <INPUT TYPE="radio" NAME="RadioGroupName" ID="CollectionsGroup" ONCLICK="ShowRadioButtonDiv('GroupName', 3)"/>Show Work with Collections<BR>
-    <INPUT TYPE="radio" NAME="RadioGroupName" ID="LoaderGroup" ONCLICK="ShowRadioButtonDiv('GroupName', 3)"/>Show Loading Documents<BR>
-    <INPUT TYPE="radio" NAME="RadioGroupName" ID="GroupName3" ONCLICK="ShowRadioButtonDiv('GroupName', 3)"/>Show section 3<BR>
-    </FORM>
-
-    <SCRIPT>
-      function ShowRadioButtonDiv (IdBaseName, NumberOfButtons) {
-      for (x=1;x<=NumberOfButtons;x++) {
-          CheckThisButton = IdBaseName + x;
-          ThisDiv = IdBaseName + x +'Div';
-        if (document.getElementById(CheckThisButton).checked) {
-            document.getElementById(ThisDiv).style.display = "block";
-          }
-        else {
-          document.getElementById(ThisDiv).style.display = "none";
-          }
-        }
-      return false;
-      }
-    </SCRIPT>
   </head>
       
   <body>
@@ -31,8 +10,8 @@ Assisted by WCA@IBM // Latest GenAI contribution: ibm/granite-20b-code-instruct-
     <h2>Introduction</h2>
     <p>This is a simple Flask web page, which is built to link to the different stages of the demo David Spurway built to show GenAI using Sales Manual and Report PDF documents, running on Red Hat OpenShift Container Platform on IBM Power.</p> 
     <p>For this, we are using the Techzone environment "OpenShift on POWER10 - Bastion, 1 Master with NFS Storage".</p>
-
-      <DIV ID="CollectionsGroup" STYLE="display:none;">Work with Collections
+    <button type="button" class="collapsible">Work with Collections</button>
+      <DIV class="content">
       <h2>List Collections which can be used for Retrieval Augmented Generation at this time</h2>
       <button onclick="myRAG_list_collections_func()">Click to List Collections for RAG</button>
       <p id="RAG_list_collections_id"></p>
@@ -77,7 +56,8 @@ Assisted by WCA@IBM // Latest GenAI contribution: ibm/granite-20b-code-instruct-
       </script>
     </DIV>
     
-    <DIV ID="LoaderGroup" STYLE="display:none;">Load Documents
+    <button type="button" class="collapsible">Load Documents</button>
+    <DIV class="content">
     
       <h2>Load pre-saved Sales Manual PDF documents into the Vector DB so the data to be used for Retrieval Augmented Generation</h2>
         <button id="IBM_Power_S1012" onclick="myRAG_loader_func('IBM_Power_S1012')">Load IBM Power S1012 Sales Manual</button>
