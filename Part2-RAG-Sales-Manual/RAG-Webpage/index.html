@@ -3,28 +3,36 @@ Assisted by WCA@IBM // Latest GenAI contribution: ibm/granite-20b-code-instruct-
 <html>
   <head>
     <title>GenAI with PDF Docs Demo Page</title>
+    <FORM STYLE="padding-left:5px">
+    <INPUT TYPE="radio" NAME="RadioGroupName" ID="CollectionsGroup" ONCLICK="ShowRadioButtonDiv('GroupName', 3)"/>Show Work with Collections<BR>
+    <INPUT TYPE="radio" NAME="RadioGroupName" ID="LoaderGroup" ONCLICK="ShowRadioButtonDiv('GroupName', 3)"/>Show Loading Documents<BR>
+    <INPUT TYPE="radio" NAME="RadioGroupName" ID="GroupName3" ONCLICK="ShowRadioButtonDiv('GroupName', 3)"/>Show section 3<BR>
+    </FORM>
+
+    <SCRIPT>
+      function ShowRadioButtonDiv (IdBaseName, NumberOfButtons) {
+      for (x=1;x<=NumberOfButtons;x++) {
+          CheckThisButton = IdBaseName + x;
+          ThisDiv = IdBaseName + x +'Div';
+        if (document.getElementById(CheckThisButton).checked) {
+            document.getElementById(ThisDiv).style.display = "block";
+          }
+        else {
+          document.getElementById(ThisDiv).style.display = "none";
+          }
+        }
+      return false;
+      }
+    </SCRIPT>
   </head>
+      
   <body>
     <h1>GenAI with PDF Docs Demo Page</h1>
     <h2>Introduction</h2>
     <p>This is a simple Flask web page, which is built to link to the different stages of the demo David Spurway built to show GenAI using Sales Manual and Report PDF documents, running on Red Hat OpenShift Container Platform on IBM Power.</p> 
     <p>For this, we are using the Techzone environment "OpenShift on POWER10 - Bastion, 1 Master with NFS Storage".</p>
 
-    <SCRIPT>
-      function ShowAndHide() {
-      var x = document.getElementById('Work_With_Collections');
-      if (x.style.display == 'none') {
-          x.style.display = 'block';
-      } else {
-          x.style.display = 'none';
-      }
-    }
-    </SCRIPT>
-
-    <BUTTON ONCLICK="ShowAndHide()">Click to work with Collections</BUTTON>
-
-    <DIV ID="Work_With_Collections" STYLE="display:none">
-    
+      <DIV ID="CollectionsGroup" STYLE="display:none;">Work with Collections
       <h2>List Collections which can be used for Retrieval Augmented Generation at this time</h2>
       <button onclick="myRAG_list_collections_func()">Click to List Collections for RAG</button>
       <p id="RAG_list_collections_id"></p>
@@ -68,30 +76,15 @@ Assisted by WCA@IBM // Latest GenAI contribution: ibm/granite-20b-code-instruct-
         }
       </script>
     </DIV>
-
-    <SCRIPT>
-      function ShowAndHide() {
-      var x = document.getElementById('Load_Documents');
-      if (x.style.display == 'none') {
-          x.style.display = 'block';
-      } else {
-          x.style.display = 'none';
-      }
-    }
-    </SCRIPT>
-
-    <BUTTON ONCLICK="ShowAndHide()">Click to load documents</BUTTON>
-
-    <DIV ID="Load_Documents" STYLE="display:none">
+    
+    <DIV ID="LoaderGroup" STYLE="display:none;">Load Documents
     
       <h2>Load pre-saved Sales Manual PDF documents into the Vector DB so the data to be used for Retrieval Augmented Generation</h2>
-      <div>
         <button id="IBM_Power_S1012" onclick="myRAG_loader_func('IBM_Power_S1012')">Load IBM Power S1012 Sales Manual</button>
         <button id="IBM_Power_S1014" onclick="myRAG_loader_func('IBM_Power_S1014')">Load IBM Power S1014 Sales Manual</button>
         <button id="IBM_Power_S1022" onclick="myRAG_loader_func('IBM_Power_S1022')">Load IBM Power S1022 Sales Manual</button>
         <button id="IBM_Power_S1022s" onclick="myRAG_loader_func('IBM_Power_S1022s')">Load IBM Power S1022s Sales Manual</button>
         <button id="IBM_Power_S1024" onclick="myRAG_loader_func('IBM_Power_S1024')">Load IBM Power S1024 Sales Manual</button>
-      </div>
     
       <p id="RAG_loader_server_name_id"></p>
 
@@ -112,7 +105,6 @@ Assisted by WCA@IBM // Latest GenAI contribution: ibm/granite-20b-code-instruct-
             });
         }
       </script>
-    </DIV>
     
     <h2>Load pre-saved Annual Report PDF documents into the Vector DB so the data to be used for Retrieval Augmented Generation</h2>
     <div>
@@ -140,6 +132,7 @@ Assisted by WCA@IBM // Latest GenAI contribution: ibm/granite-20b-code-instruct-
           });
       }
     </script>
+    </DIV>
     
     <h2>Set Questions and Server Name and retrieve data from the Vector DB, so we can use is as part of our prompt for Retrieval Augmented Generation</h2>
     <p>Pick a Server Name to ask our questions about. We can then use the metadata saved with the Sales Manual information to get chunks only from the relivant Sales Manual that was stored.</p>
