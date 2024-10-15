@@ -10,7 +10,7 @@ import os
 import logging
 
 app = Flask(__name__)
-CORS(app, origins=["https://rag-webpage-llm-on-techzone.apps.p1273.cecc.ihost.com"]) 
+CORS(app, origins=["https://rag-webpage-llm-on-techzone.apps.p1293.cecc.ihost.com"]) 
 
 if __name__ != '__main__':
     gunicorn_logger = logging.getLogger('gunicorn.error')
@@ -22,21 +22,17 @@ if __name__ != '__main__':
 def index():
     content = {}
 
-    if request.args.get('Report_URL'):
-        Report_URL = request.args.get('Report_URL')
-        app.logger.info('Found Report URL '+Report_URL)
-
-        FNAME = "IBM_Annual_Report_2023.pdf"
-
-        res = requests.get(Report_URL)
-        with open(FNAME, 'wb') as file:
-            file.write(res.content)
+    if request.args.get('Report_Name'):
+        Report_Name = request.args.get('Report_Name')
+        app.logger.info('Found Report Name '+Report_Name)
         
         MILVUS_HOST="milvus-service"
         MILVUS_PORT="19530"
 
         connections.connect(host=MILVUS_HOST, port=MILVUS_PORT)
         app.logger.info('Connected to Milvus Host '+MILVUS_HOST)
+
+        FNAME = Report_Name+".pdf"
         
         loader = PyPDFLoader(FNAME)
         app.logger.info('Loading file '+FNAME)
@@ -62,7 +58,7 @@ def index():
         
         content['result'] = "Success"
     else:
-        content ['result'] = "Server Name Missing"
+        content ['result'] = "Report Name Missing"
         
     return content
 
