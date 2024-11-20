@@ -10,7 +10,7 @@ import os
 import logging
 
 app = Flask(__name__)
-CORS(app, origins=["https://rag-webpage-llm-on-techzone.apps.p1293.cecc.ihost.com"]) 
+CORS(app, origins=["https://rag-webpage-llm-on-techzone.apps.p1309.cecc.ihost.com"]) 
 
 if __name__ != '__main__':
     gunicorn_logger = logging.getLogger('gunicorn.error')
