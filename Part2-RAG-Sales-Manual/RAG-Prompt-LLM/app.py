@@ -35,7 +35,7 @@ def index():
         }
         app.logger.info('Sending request to the LLM with this JSON data: '+str(json_data))
         
-        res = requests.post(f'http://{LLAMA_HOST}:{LLAMA_PORT}/completion', json=json_data, timeout=60)
+        res = requests.post(f'http://{LLAMA_HOST}:{LLAMA_PORT}/completion', json=json_data, timeout=600)
         app.logger.info('Recieved this from the LLM: '+str(res.json()))
         
         answer = res.json()['content']
