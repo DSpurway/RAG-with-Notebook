@@ -73,7 +73,7 @@ Assisted by WCA@IBM // Latest GenAI contribution: ibm/granite-20b-code-instruct-
       <script>
         function myRAG_loader_func(Server_Name) {
           document.getElementById(Server_Name).innerHTML = "Loading " + Server_Name + ".pdf. This takes a few minutes.";
-          fetch("https://rag-loader-deploy-llm-test-project.apps.cyan.pssc.mop.fr.ibm.com/?Server_Name=" + Server_Name, { signal: AbortSignal.timeout(500000) })
+          fetch("https://rag-sales-manual-loader-deploy-llm-test-project.apps.cyan.pssc.mop.fr.ibm.com/?Server_Name=" + Server_Name, { signal: AbortSignal.timeout(500000) })
             .then(response => response.json())
             .then(data => {
               console.log(data);
@@ -143,7 +143,7 @@ Assisted by WCA@IBM // Latest GenAI contribution: ibm/granite-20b-code-instruct-
         
           var Server_Name = document.getElementById("Server_Name").value;
           var Server_Question = document.getElementById("Server_Question").value;
-          fetch("https://rag-get-docs-deploy-llm-test-project.apps.cyan.pssc.mop.fr.ibm.com/?Server_Name=" + Server_Name +"&Question=\"" +Server_Question +"\"")
+          fetch("https://rag-get-sales-manual-docs-deploy-llm-test-project.apps.cyan.pssc.mop.fr.ibm.com/?Server_Name=" + Server_Name +"&Question=\"" +Server_Question +"\"")
             .then(response => response.json())
             .then(data => {
               console.log(data.result);
