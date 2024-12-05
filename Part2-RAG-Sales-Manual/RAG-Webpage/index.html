@@ -62,23 +62,23 @@ Assisted by WCA@IBM // Latest GenAI contribution: ibm/granite-20b-code-instruct-
       <summary>Click to load documents</summary>
     
       <h2>Load pre-saved Sales Manual PDF documents into the Vector DB so the data to be used for Retrieval Augmented Generation</h2>
-        <button id="IBM_Power_S1012" onclick="myRAG_loader_func('IBM_Power_S1012')">Load IBM Power S1012 Sales Manual</button>
-        <button id="IBM_Power_S1014" onclick="myRAG_loader_func('IBM_Power_S1014')">Load IBM Power S1014 Sales Manual</button>
-        <button id="IBM_Power_S1022" onclick="myRAG_loader_func('IBM_Power_S1022')">Load IBM Power S1022 Sales Manual</button>
-        <button id="IBM_Power_S1022s" onclick="myRAG_loader_func('IBM_Power_S1022s')">Load IBM Power S1022s Sales Manual</button>
-        <button id="IBM_Power_S1024" onclick="myRAG_loader_func('IBM_Power_S1024')">Load IBM Power S1024 Sales Manual</button>
+        <button id="IBM_Power_S1012" onclick="myRAG_sales_manual_loader_func('IBM_Power_S1012')">Load IBM Power S1012 Sales Manual</button>
+        <button id="IBM_Power_S1014" onclick="myRAG_sales_manual_loader_func('IBM_Power_S1014')">Load IBM Power S1014 Sales Manual</button>
+        <button id="IBM_Power_S1022" onclick="myRAG_sales_manual_loader_func('IBM_Power_S1022')">Load IBM Power S1022 Sales Manual</button>
+        <button id="IBM_Power_S1022s" onclick="myRAG_sales_manual_loader_func('IBM_Power_S1022s')">Load IBM Power S1022s Sales Manual</button>
+        <button id="IBM_Power_S1024" onclick="myRAG_sales_manual_loader_func('IBM_Power_S1024')">Load IBM Power S1024 Sales Manual</button>
     
-      <p id="RAG_loader_server_name_id"></p>
+      <p id="RAG_sales_manual_loader_server_name_id"></p>
 
       <script>
-        function myRAG_loader_func(Server_Name) {
+        function myRAG_sales_manual_loader_func(Server_Name) {
           document.getElementById(Server_Name).innerHTML = "Loading " + Server_Name + ".pdf. This takes a few minutes.";
           fetch("https://rag-sales-manual-loader-deploy-llm-test-project.apps.cyan.pssc.mop.fr.ibm.com/?Server_Name=" + Server_Name, { signal: AbortSignal.timeout(500000) })
             .then(response => response.json())
             .then(data => {
               console.log(data);
               document
-                .getElementById("RAG_loader_server_name_id")
+                .getElementById("RAG_sales_manual_loader_server_name_id")
                 .insertAdjacentHTML("beforeend", `<p>${data.result}</p>`);
               document.getElementById(Server_Name).innerHTML = "&#10003;";
             })
