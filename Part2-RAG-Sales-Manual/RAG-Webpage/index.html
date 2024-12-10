@@ -20,7 +20,7 @@ Assisted by WCA@IBM // Latest GenAI contribution: ibm/granite-20b-code-instruct-
 
       <script>
         function myRAG_list_collections_func() {
-          fetch("https://rag-list-collections-deploy-llm-test-project.apps.cyan.pssc.mop.fr.ibm.com/")
+          fetch("https://rag-list-collections-llm-on-techzone.apps.p1370.cecc.ihost.com/")
             .then(response => response.json())
             .then(data => {
               console.log(data);
@@ -43,7 +43,7 @@ Assisted by WCA@IBM // Latest GenAI contribution: ibm/granite-20b-code-instruct-
       <script>
         function myRAG_drop_collections_func() {
           var collectionName = document.getElementById("collection").value;
-          fetch("https://rag-drop-collection-deploy-llm-test-project.apps.cyan.pssc.mop.fr.ibm.com/?Collection=" + collectionName)
+          fetch("https://rag-drop-collection-llm-on-techzone.apps.p1370.cecc.ihost.com/?Collection=" + collectionName)
             .then(response => response.json())
             .then(data => {
               console.log(data);
@@ -73,7 +73,7 @@ Assisted by WCA@IBM // Latest GenAI contribution: ibm/granite-20b-code-instruct-
       <script>
         function myRAG_sales_manual_loader_func(Server_Name) {
           document.getElementById(Server_Name).innerHTML = "Loading " + Server_Name + ".pdf. This takes a few minutes.";
-          fetch("https://rag-sales-manual-loader-deploy-llm-test-project.apps.cyan.pssc.mop.fr.ibm.com/?Server_Name=" + Server_Name, { signal: AbortSignal.timeout(500000) })
+          fetch("https://rag-sales-manual-loader-llm-on-techzone.apps.p1370.cecc.ihost.com/?Server_Name=" + Server_Name, { signal: AbortSignal.timeout(500000) })
             .then(response => response.json())
             .then(data => {
               console.log(data);
@@ -100,7 +100,7 @@ Assisted by WCA@IBM // Latest GenAI contribution: ibm/granite-20b-code-instruct-
     <script>
       function myRAG_report_loader_func(Report_Name) {
         document.getElementById(Report_Name).innerHTML = "Loading " + Report_Name + ".pdf. This takes a few minutes.";
-        fetch("https://rag-report-loader-deploy-llm-test-project.apps.cyan.pssc.mop.fr.ibm.com/?Report_Name=" + Report_Name, { signal: AbortSignal.timeout(500000) })
+        fetch("https://rag-report-loader-llm-on-techzone.apps.p1370.cecc.ihost.com/?Report_Name=" + Report_Name, { signal: AbortSignal.timeout(500000) })
           .then(response => response.json())
           .then(data => {
             console.log(data);
@@ -143,7 +143,7 @@ Assisted by WCA@IBM // Latest GenAI contribution: ibm/granite-20b-code-instruct-
         
           var Server_Name = document.getElementById("Server_Name").value;
           var Server_Question = document.getElementById("Server_Question").value;
-          fetch("https://rag-get-sales-manual-docs-deploy-llm-test-project.apps.cyan.pssc.mop.fr.ibm.com/?Server_Name=" + Server_Name +"&Question=\"" +Server_Question +"\"")
+          fetch("https://rag-get-sales-manual-docs-llm-on-techzone.apps.p1370.cecc.ihost.com/?Server_Name=" + Server_Name +"&Question=\"" +Server_Question +"\"")
             .then(response => response.json())
             .then(data => {
               console.log(data.result);
@@ -214,7 +214,7 @@ Assisted by WCA@IBM // Latest GenAI contribution: ibm/granite-20b-code-instruct-
         
           var Report_Name = document.getElementById("Report_Name").value;
           var Report_Question = document.getElementById("Report_Question").value;
-            fetch("https://rag-get-report-docs-deploy-llm-test-project.apps.cyan.pssc.mop.fr.ibm.com/?Report_Name=" + Report_Name +"&Question=\"" +Report_Question +"\"")
+            fetch("https://rag-get-report-docs-llm-on-techzone.apps.p1370.cecc.ihost.com/?Report_Name=" + Report_Name +"&Question=\"" +Report_Question +"\"")
             .then(response => response.json())
             .then(data => {
               console.log(data.result);
@@ -324,7 +324,7 @@ Assisted by WCA@IBM // Latest GenAI contribution: ibm/granite-20b-code-instruct-
       <script>
         function myRAG_send_prompt_func() {
           console.log(Prompt);
-          fetch("https://rag-prompt-llm-deploy-llm-test-project.apps.cyan.pssc.mop.fr.ibm.com", {
+          fetch("https://rag-prompt-llm-llm-on-techzone.apps.p1370.cecc.ihost.com", {
             method: "POST",
             timeout: 60,
             body: JSON.stringify(Prompt),
