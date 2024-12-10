@@ -4,7 +4,7 @@ import logging
 import requests
 
 app = Flask(__name__)
-CORS(app, origins=["https://rag-webpage-deploy-llm-test-project.apps.cyan.pssc.mop.fr.ibm.com"]) 
+CORS(app, origins=["https://rag-webpage-deploy-llm-test-project.apps.p1370.cecc.ihost.com"]) 
 
 app = Flask(__name__)
 
