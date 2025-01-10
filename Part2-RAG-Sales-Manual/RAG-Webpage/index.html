@@ -346,5 +346,36 @@ Assisted by WCA@IBM // Latest GenAI contribution: ibm/granite-20b-code-instruct-
       </script>
     </details>
 
+    <details>
+      <summary>Click to test agentic</summary>
+      <button onclick="myRAG_test_agentic_func()">Test agentic</button><br><br>
+
+      <p id="RAG_test_agentic_id"></p>
+
+      <script>
+        function myRAG_send_prompt_func() {
+          console.log(Prompt);
+          fetch("https://agentic-rag-llm-test-project.apps.cyan.pssc.mop.fr.ibm.com", {
+            method: "POST",
+            timeout: 60,
+            body: JSON.stringify(Prompt),
+            headers: {
+              "Content-type": "application/json; charset=UTF-8"
+            }
+          })
+            .then(response => response.json())
+            .then(data => {
+              console.log(data);
+              document
+                .getElementById("RAG_send_prompt_id")
+                .insertAdjacentHTML("beforeend", `<p>Result: ${data.result}</p><p>Answer: ${data.answer}</p>`);
+            })
+            .catch(error => {
+              console.error("Error fetching data:", error);
+            });
+          }
+      </script>
+    </details>
+
   </body>
 </html>
