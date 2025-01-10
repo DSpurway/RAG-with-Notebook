@@ -353,7 +353,7 @@ Assisted by WCA@IBM // Latest GenAI contribution: ibm/granite-20b-code-instruct-
       <p id="RAG_test_agentic_id"></p>
 
       <script>
-        function myRAG_send_prompt_func() {
+        function myRAG_test_agentic_func() {
           console.log(Prompt);
           fetch("https://agentic-rag-llm-test-project.apps.cyan.pssc.mop.fr.ibm.com", {
             method: "POST",
@@ -367,7 +367,7 @@ Assisted by WCA@IBM // Latest GenAI contribution: ibm/granite-20b-code-instruct-
             .then(data => {
               console.log(data);
               document
-                .getElementById("RAG_send_prompt_id")
+                .getElementById("RAG_test_agentic_id")
                 .insertAdjacentHTML("beforeend", `<p>Result: ${data.result}</p><p>Answer: ${data.answer}</p>`);
             })
             .catch(error => {
