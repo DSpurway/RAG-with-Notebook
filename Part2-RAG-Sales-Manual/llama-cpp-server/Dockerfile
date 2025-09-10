@@ -1,8 +1,8 @@
 FROM registry.access.redhat.com/ubi9/ubi
 ENV BLA_VENDOR=OpenBLAS
 
-RUN dnf -y update && dnf install -y git automake gcc gcc-c++ llvm-toolset ninja-build python3-pip python3-devel gfortran curl --allowerasing
-RUN pip install --prefer-binary make cmake wget torch --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux
+RUN dnf -y update && dnf install -y git automake gcc gcc-c++ llvm-toolset ninja-build python3-pip python3-devel gfortran
+RUN pip install --prefer-binary make cmake wget torch curl-devel --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux
 
 RUN git clone --recursive https://github.com/OpenMathLib/OpenBLAS.git
 WORKDIR OpenBLAS
@@ -18,7 +18,6 @@ RUN LD_LIBRARY_PATH=/opt/lib cmake -B build \
 -DGGML_BLAS=ON \
 -DGGML_BLAS_VENDOR=OpenBLAS \
 -DBLAS_LIBRARIES=/opt/lib/libopenblas.so \
--BLAS_INCLUDE_DIRS=/opt/OpenBLAS/include \
 -DGGML_CUDA=OFF 
 
 
