@@ -6,7 +6,7 @@ RUN dnf -y update && dnf install -y git automake gcc gcc-c++ llvm-toolset ninja-
 RUN pip install --prefer-binary make cmake wget torch --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux
 
 RUN git clone --recursive https://github.com/OpenMathLib/OpenBLAS.git
-RUN cd OpenBLAS
+WORKDIR OpenBLAS
 RUN git checkout v0.3.30
 RUN make -j${MAX_JOBS} TARGET=POWER10 BINARY=64 USE_OPENMP=1 USE_THREAD=1 NUM_THREADS=120 DYNAMIC_ARCH=1 INTERFACE64=0
 RUN make install
