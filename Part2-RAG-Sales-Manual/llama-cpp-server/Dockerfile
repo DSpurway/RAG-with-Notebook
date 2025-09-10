@@ -1,8 +1,9 @@
 FROM registry.access.redhat.com/ubi9/ubi
 ENV BLA_VENDOR=OpenBLAS
 
-RUN dnf install -y python-pip
-RUN pip install --prefer-binary gcc-toolset-13 --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux
+RUN dnf -y update && dnf install -y gcc-toolset-13 git make cmake automake gcc gcc-c++ llvm-toolset wget ninja-build \
+    curl python3-dev python3-venv python3-pip python-is-python3
+#RUN pip install --prefer-binary gcc-toolset-13 --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux
 
 #RUN dnf -y install gcc-toolset-13 && \
 #    source /opt/rh/gcc-toolset-13/enable
