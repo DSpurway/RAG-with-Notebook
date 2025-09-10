@@ -1,7 +1,8 @@
 FROM registry.access.redhat.com/ubi9/python-312
 ENV BLA_VENDOR=OpenBLAS
 
-RUN pip install --prefer-binary groupinstall 'Development Tools' --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux
+RUN dnf -y groupinstall 'Development Tools'
+#RUN pip install --prefer-binary groupinstall 'Development Tools' --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux
 
 #RUN dnf -y install gcc-toolset-13 && \
     source /opt/rh/gcc-toolset-13/enable
