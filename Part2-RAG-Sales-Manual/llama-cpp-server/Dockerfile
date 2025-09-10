@@ -1,25 +1,10 @@
 FROM registry.access.redhat.com/ubi9/ubi
 ENV BLA_VENDOR=OpenBLAS
 
-RUN dnf -y update && dnf install -y git make cmake automake gcc gcc-c++ llvm-toolset wget ninja-build \
+RUN dnf -y update && dnf install -y make cmake automake gcc gcc-c++ llvm-toolset wget ninja-build \
     python3-devel python3-pip
-RUN pip install --prefer-binary openblas --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux
+RUN pip install --prefer-binary git --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux
 
-#RUN dnf -y install gcc-toolset-13 && \
-#    source /opt/rh/gcc-toolset-13/enable
-
-# install build tools and clone and compile llama.cpp
-#RUN dnf -y update && dnf install -y git make cmake automake gcc gcc-c++ llvm-toolset wget
-    
-#RUN wget --quiet https://repo.anaconda.com/archive/Anaconda3-2023.09-0-Linux-ppc64le.sh -O ~/conda.sh && \
-#    /bin/bash ~/conda.sh -b -p /opt/conda
-
-# Put conda in path so we can use conda activate
-#ENV PATH /opt/conda/bin:$PATH
-
-#RUN conda update -n base -c defaults conda && \
-#    conda config --prepend channels rocketce && \
-#    conda config --append channels conda-forge && \
 #    conda install -y pytorch-cpu -c rocketce && \
 #    conda install -y gfortran -c conda-forge && \
 #    conda install -y openblas -c rocketce && \
