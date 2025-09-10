@@ -7,8 +7,7 @@ RUN pip install --prefer-binary make cmake wget torch --extra-index-url=https://
 RUN git clone --recursive https://github.com/OpenMathLib/OpenBLAS.git
 WORKDIR OpenBLAS
 RUN git checkout v0.3.30
-ENV MAX_JOBS="${MAX_JOBS:-$(nproc)}"
-RUN make -j${MAX_JOBS} TARGET=POWER10 BINARY=64 USE_OPENMP=1 USE_THREAD=1 NUM_THREADS=120 DYNAMIC_ARCH=1 INTERFACE64=0
+RUN make TARGET=POWER10 BINARY=64 USE_OPENMP=1 USE_THREAD=1 NUM_THREADS=120 DYNAMIC_ARCH=1 INTERFACE64=0
 RUN make install
 WORKDIR /
 
