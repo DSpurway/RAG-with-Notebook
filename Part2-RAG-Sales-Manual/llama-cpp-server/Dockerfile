@@ -19,24 +19,25 @@ RUN LD_LIBRARY_PATH=/opt/lib cmake -B build \
 -DBLAS_LIBRARIES=/opt/lib/libopenblas.so \
 -DBLAS_INCLUDE_DIRS=/opt/OpenBLAS/include \
 -DGGML_CUDA=OFF 
+RUN LD_LIBRARY_PATH=/opt/lib cmake --build build --config Release
 
-#CMD bash
+CMD bash
 
-#FROM registry.access.redhat.com/ubi9/ubi
+FROM registry.access.redhat.com/ubi9/ubi
 
-#RUN dnf clean all
+RUN dnf clean all
 
-#RUN mkdir -p /opt/llama/lib
+RUN mkdir -p /opt/llama/lib
 
-#ENV  LD_LIBRARY_PATH=/lib
-#COPY --from=builder --chmod=755 /llama.cpp/build/bin/llama-server /usr/local/bin
-#COPY --from=builder --chmod=644 /llama.cpp/build/bin/*.so /lib/
+ENV  LD_LIBRARY_PATH=/lib
+COPY --from=builder --chmod=755 /llama.cpp/build/bin/llama-server /usr/local/bin
+COPY --from=builder --chmod=644 /llama.cpp/build/bin/*.so /lib/
 
 EXPOSE 8080
 
 RUN mkdir -p /models
 RUN wget --quiet https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF/resolve/main/tinyllama-1.1b-chat-v1.0.Q8_0.gguf -O /models/tinyllama-1.1b-chat-v1.0.Q8_0.gguf
-ENTRYPOINT ["llama-server", "-m", "/models/tinyllama-1.1b-chat-v1.0.Q8_0.gguf", "--host", "0.0.0.0"]
+#ENTRYPOINT ["llama-server", "-m", "/models/tinyllama-1.1b-chat-v1.0.Q8_0.gguf", "--host", "0.0.0.0"]
     
 #RUN wget --quiet https://huggingface.co/bartowski/granite-3.0-8b-instruct-GGUF/resolve/main/granite-3.0-8b-instruct-Q4_K_M.gguf -O /models/granite-3.0-8b-instruct-Q4_K_M.gguf
 #RUN wget --quiet https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF/resolve/main/tinyllama-1.1b-chat-v1.0.Q8_0.gguf -O /models/tinyllama-1.1b-chat-v1.0.Q8_0.gguf
@@ -44,4 +45,4 @@ ENTRYPOINT ["llama-server", "-m", "/models/tinyllama-1.1b-chat-v1.0.Q8_0.gguf", 
 #RUN wget --quiet https://huggingface.co/TheBloke/deepseek-llm-7B-chat-GGUF/resolve/main/deepseek-llm-7b-chat.Q8_0.gguf -O /models/deepseek-llm-7b-chat.Q8_0.gguf
 
 #ENTRYPOINT ["llama-server", "-m", "/models/deepseek-llm-7b-chat.Q8_0.gguf", "--prio", "3", "-c", "4096","-b", "32", "-t", "40", "-n", "-1", "--mlock", "--host", "0.0.0.0"]
-#ENTRYPOINT [ "/usr/local/bin/llama-server", "-m", "/models/tinyllama-1.1b-chat-v1.0.Q8_0.gguf", "--host", "0.0.0.0"]
+ENTRYPOINT [ "/usr/local/bin/llama-server", "-m", "/models/tinyllama-1.1b-chat-v1.0.Q8_0.gguf", "--host", "0.0.0.0"]
