@@ -11,7 +11,6 @@ RUN make TARGET=POWER10 BINARY=64 USE_OPENMP=1 USE_THREAD=1 NUM_THREADS=120 DYNA
 RUN make install
 WORKDIR /
 
-RUN whereis libopenblas.so
 RUN git clone https://github.com/ggml-org/llama.cpp.git
 WORKDIR llama.cpp
 RUN git checkout b6122
@@ -19,6 +18,7 @@ RUN LD_LIBRARY_PATH=/opt/lib cmake -B build \
 -DGGML_BLAS=ON \
 -DGGML_BLAS_VENDOR=OpenBLAS \
 -DBLAS_LIBRARIES=/opt/lib/libopenblas.so \
+-BLAS_INCLUDE_DIRS=/opt/OpenBLAS/include \
 -DGGML_CUDA=OFF 
 
 
