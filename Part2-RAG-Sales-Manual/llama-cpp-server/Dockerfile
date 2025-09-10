@@ -2,10 +2,10 @@ FROM registry.access.redhat.com/ubi9/ubi
 ENV BLA_VENDOR=OpenBLAS
 
 RUN dnf install -y python-pip
-#RUN pip install --prefer-binary groupinstall 'Development Tools' --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux
+RUN pip install --prefer-binary gcc-toolset-13 --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux
 
 #RUN dnf -y install gcc-toolset-13 && \
-    source /opt/rh/gcc-toolset-13/enable
+#    source /opt/rh/gcc-toolset-13/enable
 
 # install build tools and clone and compile llama.cpp
 #RUN dnf -y update && dnf install -y git make cmake automake gcc gcc-c++ llvm-toolset wget
