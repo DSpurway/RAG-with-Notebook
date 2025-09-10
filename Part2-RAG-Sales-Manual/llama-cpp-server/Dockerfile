@@ -1,8 +1,15 @@
 FROM registry.access.redhat.com/ubi9/ubi
 ENV BLA_VENDOR=OpenBLAS
+ENV MAX_JOBS="${MAX_JOBS:-$(nproc)}"
 
 RUN dnf -y update && dnf install -y git automake gcc gcc-c++ llvm-toolset ninja-build python3-pip python3-devel gfortran 
 RUN pip install --prefer-binary make cmake wget torch --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux
+
+RUN git clone --recursive https://github.com/OpenMathLib/OpenBLAS.git
+RUN cd OpenBLAS
+RUN git checkout v0.3.30
+RUN make -j${MAX_JOBS} TARGET=POWER10 BINARY=64 USE_OPENMP=1 USE_THREAD=1 NUM_THREADS=120 DYNAMIC_ARCH=1 INTERFACE64=0
+RUN make install
 
 #    conda install -y pytorch-cpu -c rocketce && \
 #    conda install -y openblas -c rocketce && \
