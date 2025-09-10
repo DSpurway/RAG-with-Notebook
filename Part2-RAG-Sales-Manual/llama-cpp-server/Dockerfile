@@ -1,7 +1,7 @@
 FROM registry.access.redhat.com/ubi9/ubi as builder
 
-RUN dnf -y update && dnf install -y git automake gcc gcc-c++ llvm-toolset ninja-build python3-pip python3-devel gfortran curl-devel 
-RUN pip install --prefer-binary make cmake wget torch wget --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux
+RUN dnf -y update && dnf install -y git automake gcc gcc-c++ llvm-toolset ninja-build python3-pip python3-devel gfortran curl-devel wget
+RUN pip install --prefer-binary make cmake torch --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux
 
 RUN git clone --recursive https://github.com/OpenMathLib/OpenBLAS.git
 WORKDIR OpenBLAS
