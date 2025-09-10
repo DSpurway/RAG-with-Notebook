@@ -1,5 +1,5 @@
 FROM registry.access.redhat.com/ubi9/ubi
-ENV BLA_VENDOR=OpenBLAS
+#ENV BLA_VENDOR=OpenBLAS
 
 RUN dnf -y update && dnf install -y git automake gcc gcc-c++ llvm-toolset ninja-build python3-pip python3-devel gfortran curl-devel 
 RUN pip install --prefer-binary make cmake wget torch --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux
