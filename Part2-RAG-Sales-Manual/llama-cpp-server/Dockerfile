@@ -20,6 +20,8 @@ RUN LD_LIBRARY_PATH=/opt/lib cmake -B build \
 -DBLAS_INCLUDE_DIRS=/opt/OpenBLAS/include \
 -DGGML_CUDA=OFF 
 
+RUN whereis llama-server
+RUN ls /llama.cpp/build/bin
 CMD bash
 
 FROM registry.access.redhat.com/ubi9/ubi
