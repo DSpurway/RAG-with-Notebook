@@ -1,9 +1,9 @@
 FROM registry.access.redhat.com/ubi9/ubi
 ENV BLA_VENDOR=OpenBLAS
 
-RUN dnf -y update && dnf install -y git automake gcc gcc-c++ wget ninja-build \
+RUN dnf -y update && dnf install -y git automake gcc gcc-c++ llvm-toolset ninja-build \
     python3-devel python3-pip
-RUN pip install --prefer-binary make cmake llvm-toolset --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux
+RUN pip install --prefer-binary make cmake wget --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux
 
 #    conda install -y pytorch-cpu -c rocketce && \
 #    conda install -y gfortran -c conda-forge && \
