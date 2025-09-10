@@ -1,7 +1,7 @@
 FROM registry.access.redhat.com/ubi9/ubi
 ENV BLA_VENDOR=OpenBLAS
 
-RUN dnf -y group install 'Development Tools'
+RUN dnf install -y python-pip
 #RUN pip install --prefer-binary groupinstall 'Development Tools' --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux
 
 #RUN dnf -y install gcc-toolset-13 && \
