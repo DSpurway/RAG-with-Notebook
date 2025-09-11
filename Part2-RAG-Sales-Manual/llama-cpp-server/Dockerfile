@@ -1,6 +1,6 @@
 FROM registry.access.redhat.com/ubi9/ubi as builder
 
-RUN dnf -y update && dnf install -y git automake gcc gcc-c++ llvm-toolset ninja-build python3-pip python3-devel gfortran curl-devel wget
+RUN dnf -y update && dnf install -y git automake gcc gcc-c++ llvm-toolset ninja-build python3-pip python3-devel gfortran curl-devel
 RUN pip install --prefer-binary make cmake torch --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux
 
 RUN git clone --recursive https://github.com/OpenMathLib/OpenBLAS.git
@@ -28,7 +28,7 @@ RUN cmake --build build --config Release
 CMD bash
 
 FROM registry.access.redhat.com/ubi9/ubi
-
+RUN dnf -y update && dnf install -y wget
 RUN dnf clean all
 
 RUN mkdir -p /opt/llama/lib
@@ -41,7 +41,6 @@ EXPOSE 8080
 
 RUN mkdir -p /models
 RUN wget --quiet https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF/resolve/main/tinyllama-1.1b-chat-v1.0.Q8_0.gguf -O /models/tinyllama-1.1b-chat-v1.0.Q8_0.gguf
-#ENTRYPOINT ["llama-server", "-m", "/models/tinyllama-1.1b-chat-v1.0.Q8_0.gguf", "--host", "0.0.0.0"]
     
 #RUN wget --quiet https://huggingface.co/bartowski/granite-3.0-8b-instruct-GGUF/resolve/main/granite-3.0-8b-instruct-Q4_K_M.gguf -O /models/granite-3.0-8b-instruct-Q4_K_M.gguf
 #RUN wget --quiet https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF/resolve/main/tinyllama-1.1b-chat-v1.0.Q8_0.gguf -O /models/tinyllama-1.1b-chat-v1.0.Q8_0.gguf
