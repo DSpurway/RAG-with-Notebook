@@ -1,4 +1,5 @@
-FROM registry.access.redhat.com/ubi9/ubi as builder
+#FROM registry.access.redhat.com/ubi9/ubi as builder
+FROM registry.access.redhat.com/ubi9/ubi
 
 RUN dnf -y update && dnf install -y git automake gcc gcc-c++ llvm-toolset ninja-build python3-pip python3-devel gfortran curl-devel wget
 RUN pip install --prefer-binary make cmake torch --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux
@@ -36,4 +37,4 @@ RUN wget --quiet https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF/r
 #RUN wget --quiet https://huggingface.co/TheBloke/deepseek-llm-7B-chat-GGUF/resolve/main/deepseek-llm-7b-chat.Q8_0.gguf -O /models/deepseek-llm-7b-chat.Q8_0.gguf
 
 #ENTRYPOINT ["llama-server", "-m", "/models/deepseek-llm-7b-chat.Q8_0.gguf", "--prio", "3", "-c", "4096","-b", "32", "-t", "40", "-n", "-1", "--mlock", "--host", "0.0.0.0"]
-ENTRYPOINT [ "/llama.cpp/build/bin/llama-serverr", "-m", "/models/tinyllama-1.1b-chat-v1.0.Q8_0.gguf", "--host", "0.0.0.0"]
+ENTRYPOINT [ "/llama.cpp/build/bin/llama-server", "-m", "/models/tinyllama-1.1b-chat-v1.0.Q8_0.gguf", "--host", "0.0.0.0"]
