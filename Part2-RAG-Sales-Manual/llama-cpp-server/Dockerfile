@@ -28,8 +28,8 @@ RUN cmake --build build --config Release
 CMD bash
 
 #FROM registry.access.redhat.com/ubi9/ubi
-#RUN dnf -y update && dnf install -y wget
-#RUN dnf clean all
+RUN dnf -y update && dnf install -y wget
+RUN dnf clean all
 
 #RUN mkdir -p /opt/llama/lib
 
