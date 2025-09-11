@@ -20,6 +20,7 @@ RUN LD_LIBRARY_PATH=/opt/lib cmake -B build \
     -DBLAS_INCLUDE_DIRS=/opt/OpenBLAS/include \
     -DGGML_CUDA=OFF
 ENV BLAS_LIBRARIES=/opt/lib/libopenblas.so
+ENV BLAS_INCLUDE_DIRS=/opt/OpenBLAS/include
 RUN cmake --build build --config Release 
 
 CMD bash
