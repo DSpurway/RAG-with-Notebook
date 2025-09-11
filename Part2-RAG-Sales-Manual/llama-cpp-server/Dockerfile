@@ -15,7 +15,7 @@ ENV BLAS_INCLUDE_DIRS=/opt/OpenBLAS/include
 
 RUN git clone https://github.com/ggml-org/llama.cpp.git
 WORKDIR llama.cpp
-RUN git checkout b6122
+RUN git checkout master-ffb06a3
 RUN LD_LIBRARY_PATH=/opt/lib cmake -B build \
     -DGGML_BLAS=ON \
     -DGGML_BLAS_VENDOR=OpenBLAS \
@@ -36,6 +36,8 @@ RUN mkdir -p /opt/llama/lib
 ENV  LD_LIBRARY_PATH=/lib
 COPY --from=builder --chmod=755 /llama.cpp/build/bin/llama-server /usr/local/bin
 COPY --from=builder --chmod=644 /llama.cpp/build/bin/*.so /lib/
+COPY --from=builder --chmod=644 /opt/OpenBLAS/lib/libopenblas.so /lib/
+ENV BLAS_LIBRARIES=/lib/libopenblas.so
 
 EXPOSE 8080
 
