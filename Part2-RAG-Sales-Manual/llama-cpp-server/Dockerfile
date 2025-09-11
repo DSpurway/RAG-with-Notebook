@@ -10,7 +10,7 @@ RUN make -j16 TARGET=POWER10 BINARY=64 USE_OPENMP=1 USE_THREAD=1 NUM_THREADS=120
 RUN make install
 WORKDIR /
 
-ENV BLAS_LIBRARIES=/opt/lib/libopenblas.so
+ENV BLAS_LIBRARIES=/opt/OpenBLAS/lib/libopenblas.so
 ENV BLAS_INCLUDE_DIRS=/opt/OpenBLAS/include
 
 RUN git clone https://github.com/ggml-org/llama.cpp.git
@@ -19,8 +19,8 @@ WORKDIR llama.cpp
 RUN LD_LIBRARY_PATH=/opt/lib cmake -B build \
     -DGGML_BLAS=ON \
     -DGGML_BLAS_VENDOR=OpenBLAS \
-#    -DBLAS_LIBRARIES=/opt/lib/libopenblas.so \
-#    -DBLAS_INCLUDE_DIRS=/opt/OpenBLAS/include \
+    -DBLAS_LIBRARIES=/opt/OpenBLAS/lib/libopenblas.so \
+    -DBLAS_INCLUDE_DIRS=/opt/OpenBLAS/include \
     -DGGML_CUDA=OFF
 
 RUN cmake --build build --config Release 
