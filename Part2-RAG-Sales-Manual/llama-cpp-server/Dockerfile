@@ -6,7 +6,7 @@ RUN pip install --prefer-binary make cmake torch --extra-index-url=https://wheel
 RUN git clone --recursive https://github.com/OpenMathLib/OpenBLAS.git
 WORKDIR OpenBLAS
 RUN git checkout v0.3.30
-RUN make TARGET=POWER10 BINARY=64 USE_OPENMP=1 USE_THREAD=1 NUM_THREADS=120 DYNAMIC_ARCH=1 INTERFACE64=0
+RUN make -j16 TARGET=POWER10 BINARY=64 USE_OPENMP=1 USE_THREAD=1 NUM_THREADS=120 DYNAMIC_ARCH=1 INTERFACE64=0
 RUN make install
 WORKDIR /
 
@@ -20,11 +20,9 @@ RUN LD_LIBRARY_PATH=/opt/lib cmake -B build \
     -DBLAS_INCLUDE_DIRS=/opt/OpenBLAS/include \
     -DGGML_CUDA=OFF 
 RUN LD_LIBRARY_PATH=/opt/lib cmake --build build --config Release \
-    -DGGML_BLAS=ON \
     -DGGML_BLAS_VENDOR=OpenBLAS \
     -DBLAS_LIBRARIES=/opt/lib/libopenblas.so \
-    -DBLAS_INCLUDE_DIRS=/opt/OpenBLAS/include \
-    -DGGML_CUDA=OFF 
+    -DBLAS_INCLUDE_DIRS=/opt/OpenBLAS/include
 
 CMD bash
 
