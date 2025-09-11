@@ -10,7 +10,7 @@ RUN make -j16 TARGET=POWER10 BINARY=64 USE_OPENMP=1 USE_THREAD=1 NUM_THREADS=120
 RUN make install
 WORKDIR /
 
-ENV BLAS_LIBRARIES=/opt/OpenBLAS/lib/libopenblas.so
+ENV BLAS_LIBRARIES=/opt/lib/libopenblas.so
 ENV BLAS_INCLUDE_DIRS=/opt/OpenBLAS/include
 
 RUN git clone https://github.com/ggml-org/llama.cpp.git
