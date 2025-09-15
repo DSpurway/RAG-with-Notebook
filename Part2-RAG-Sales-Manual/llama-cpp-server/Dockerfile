@@ -29,7 +29,7 @@ RUN cmake --build build --config Release
 EXPOSE 8080
 
 RUN mkdir -p /models
-RUN wget --quiet https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF/resolve/main/tinyllama-1.1b-chat-v1.0.Q8_0.gguf -O /models/tinyllama-1.1b-chat-v1.0.Q8_0.gguf
+RUN wget --quiet https://huggingface.co/ibm-granite/granite-3.3-2b-instruct-GGUF/resolve/main/granite-3.3-2b-instruct-Q4_K_M.gguf -O /models/granite-3.3-2b-instruct-Q4_K_M.gguf
     
 #RUN wget --quiet https://huggingface.co/bartowski/granite-3.0-8b-instruct-GGUF/resolve/main/granite-3.0-8b-instruct-Q4_K_M.gguf -O /models/granite-3.0-8b-instruct-Q4_K_M.gguf
 #RUN wget --quiet https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF/resolve/main/tinyllama-1.1b-chat-v1.0.Q8_0.gguf -O /models/tinyllama-1.1b-chat-v1.0.Q8_0.gguf
@@ -37,4 +37,4 @@ RUN wget --quiet https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF/r
 #RUN wget --quiet https://huggingface.co/TheBloke/deepseek-llm-7B-chat-GGUF/resolve/main/deepseek-llm-7b-chat.Q8_0.gguf -O /models/deepseek-llm-7b-chat.Q8_0.gguf
 
 #ENTRYPOINT ["llama-server", "-m", "/models/deepseek-llm-7b-chat.Q8_0.gguf", "--prio", "3", "-c", "4096","-b", "32", "-t", "40", "-n", "-1", "--mlock", "--host", "0.0.0.0"]
-ENTRYPOINT [ "/llama.cpp/build/bin/llama-server", "-m", "/models/tinyllama-1.1b-chat-v1.0.Q8_0.gguf", "--host", "0.0.0.0"]
+ENTRYPOINT [ "/llama.cpp/build/bin/llama-server", "-m", "/models/granite-3.3-2b-instruct-Q4_K_M.gguf", "--host", "0.0.0.0"]
