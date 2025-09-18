@@ -2,14 +2,14 @@
 FROM registry.access.redhat.com/ubi9/ubi
 
 RUN dnf -y update && dnf install -y git automake gcc gcc-c++ llvm-toolset ninja-build python3-pip python3-devel gfortran curl-devel wget
-RUN pip install --prefer-binary make cmake torch openblas==0.3.29 --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux
+RUN pip install --prefer-binary make cmake torch --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux
 
-#RUN git clone --recursive https://github.com/OpenMathLib/OpenBLAS.git
-#WORKDIR OpenBLAS
-#RUN git checkout v0.3.30
-#RUN make -j16 TARGET=POWER10 BINARY=64 USE_OPENMP=1 USE_THREAD=1 NUM_THREADS=120 DYNAMIC_ARCH=1 INTERFACE64=0
-#RUN make install
-#WORKDIR /
+RUN git clone --recursive https://github.com/OpenMathLib/OpenBLAS.git
+WORKDIR OpenBLAS
+RUN git checkout v0.3.30
+RUN make -j16 TARGET=POWER10 BINARY=64 USE_OPENMP=1 USE_THREAD=1 NUM_THREADS=120 DYNAMIC_ARCH=1 INTERFACE64=0
+RUN make install
+WORKDIR /
 
 ENV BLAS_LIBRARIES=/opt/OpenBLAS/lib/libopenblas.so
 ENV BLAS_INCLUDE_DIRS=/opt/OpenBLAS/include
