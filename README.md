@@ -174,7 +174,7 @@ In the second part you will create a vector database (Milvus) that you'll be usi
 
 Now, for some of the following commands, you will need the "oc", or OpenShift Client. If you don't already have that, you can get it from the OpenShift session you are already using. Thank you to Andrew Laidlaw for this one! Click on the question mark top right in the OpenShift GUI (next to your username) and select Command Line Tools.
 
-![image](images/oc-download.jpg)
+![image](images/oc-download.png)
 
 You can then download the appropriate version for the device you are using to connect to OpenShift, such as a Windows or Apple Mac. Install that on your device before running the "oc" commands below.
 
