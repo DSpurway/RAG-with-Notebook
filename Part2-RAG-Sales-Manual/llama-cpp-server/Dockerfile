@@ -2,7 +2,7 @@
 FROM registry.access.redhat.com/ubi9/ubi
 
 RUN dnf -y update && dnf install -y git automake gcc gcc-c++ llvm-toolset ninja-build python3.12 python3.12-pip python3.12-devel gfortran curl-devel wget
-RUN python3.12 -m venv venv
+RUN python3.12 -m venv .venv
 RUN source .venv/bin/activate && pip install --prefer-binary make cmake torch openblas --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux
 ENV PATH="./.venv/bin:$PATH"
 ENV LD_LIBRARY_PATH=./.venv/lib/python3.12/site-packages/openblas/lib:$LD_LIBRARY_PATH
