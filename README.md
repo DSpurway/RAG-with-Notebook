@@ -109,7 +109,7 @@ Next, add in the Context directory, where there is a Dockerfile it will pick up:
 ```
 /Part2-RAG-Sales-Manual/llama-cpp-server
 ```
-![image](images/context_dir.png)
+![image](images/contect_dir.png)
 
 We don't need this in an "application", so delete the "Application Name", and change the Name for the component we are adding to:
 ```
