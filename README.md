@@ -125,7 +125,15 @@ While the build is going, we can add the storage it will need, which we made ear
 
 ![image](images/add_storage.png)
 
+Pick the "llama-models" claim from the list:
 
+![image](images/add_persistent_volume_claim.png)
+
+And add the mount point of:
+```
+/models
+```
+![image](images/existing_claim.png)
 
 If you now go to the developer view and watch the Topology you can see the llama-cpp server represented as a circle with a dark blue ring if everything deployed correctly:
 
