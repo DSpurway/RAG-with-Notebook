@@ -23,8 +23,8 @@ RUN git checkout b6122
 RUN LD_LIBRARY_PATH=/opt/lib cmake -B build \
     -DGGML_BLAS=ON \
     -DGGML_BLAS_VENDOR=OpenBLAS \
-#    -DBLAS_LIBRARIES=/opt/OpenBLAS/lib/libopenblas.so \
-#    -DBLAS_INCLUDE_DIRS=/opt/OpenBLAS/include \
+    -DBLAS_LIBRARIES=/.venv/lib/python3.12/site-packages/openblas/lib/libopenblas.so \
+    -DBLAS_INCLUDE_DIRS=/.venv/lib/python3.12/site-packages/openblas/include \
     -DGGML_CUDA=OFF
 
 RUN cmake --build build --config Release 
