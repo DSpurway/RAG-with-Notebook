@@ -1,4 +1,4 @@
-# Hands-on Lab: Deploy a Large Language Model on Power10
+<img width="1130" height="604" alt="image" src="https://github.com/user-attachments/assets/73ece7bb-d7f3-4079-90cc-5c6a06ec6455" /># Hands-on Lab: Deploy a Large Language Model on Power10
 
 In this lab you'll use a pretrained Large Language Model and deploy it on OpenShift. It will make use of the unique Power10 features such as the Vector Scalar Extension (VSX) as well as the newly introduced Matrix-Multiply Assist (MMA) units (also often called Matrix Math Accelerator, but I think the former is the correct techical name!). 
 
@@ -89,121 +89,43 @@ Click Create! What you are doing there is reserving disk space to hold the Large
 
 ### 1.2 Deployment
 
-> ***Note**: If you have problems copy & paste the code using Ctrl+C / Ctrl+V inside the VM you might need to use the browser tools. <br><br>
-Therefore, copy the code from the git, place your cursor in the empty YAML view box, hit the "Alt" key to reveal the hidden menu, use "Edit" -> "Paste"*
+In the "Developer" view, we can use the "+Add" button to add a deployment of the server for our basic large language model:
 
-Next you'll go to **Workloads** -> **Deployments** -> **Create Deployment**
+![image](images/Add_to_project.png)
 
-Select the **YAML view** radio button and replace the default with:
+The page you then get will have a box titled "Git Repository" and you can click on that box to "Import from Git":
 
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: llama-cpp-server
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: llama-cpp-server
-  template:
-    metadata:
-      labels:
-        app: llama-cpp-server
-    spec:
-      initContainers:
-        - name: fetch-model-data
-          image: ubi8
-          volumeMounts:
-            - name: llama-models
-              mountPath: /models
-          command:
-            - sh
-            - '-c'
-            - |
-              if [ ! -f /models/tinyllama-1.1b-chat-v1.0.Q8_0.gguf ] ; then
-                curl -L https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF/resolve/main/tinyllama-1.1b-chat-v1.0.Q8_0.gguf --output /models/tinyllama-1.1b-chat-v1.0.Q8_0.gguf
-              else
-                echo "model /models/tinyllama-1.1b-chat-v1.0.Q8_0.gguf already present"
-              fi
-          resources: {}
-      containers:
-        - name: llama-cpp
-          image: quay.io/mgiessing/llama-cpp-server:latest
-          args: ["-m", "/models/tinyllama-1.1b-chat-v1.0.Q8_0.gguf", "-c", "4096", "-t", "16"]
-          ports:
-            - containerPort: 8080
-              name: http
-          volumeMounts:
-            - name: llama-models
-              mountPath: /models
-      volumes:
-        - name: llama-models
-          persistentVolumeClaim:
-            claimName: llama-models
+![image](images/import_from_git.png)
+
+You can import from David Spurway's repo by putting in the following URL into the Git Repo URL box, but don't hit "create" yet, as we have more to do!
 ```
-
-Click Create! 
-
-This could take a few moments as it initially fetches the model artifact (if not present) and then probes if the container is ready & live.
-
-It may be less than obvious what you just did there! Marvin was kind enough to wrap everything up in an image you can just deploy, which is great to get your demo up and running fast, but I know that the first time I did this, it worked so fast that I was left with my head spinning a bit! The code there is "YAML". As discussed here [https://www.ibm.com/think/topics/yaml](https://www.ibm.com/think/topics/yaml), “YAML” is an acronym which stands for "YAML Ain't Markup Language" or "Yet Another Markup Language." The former is meant to underscore that the language is intended for data rather than documents. As it is meant for data, not documentation, that would be part of why it may not be clear what it is doing! You can see early on in the YAML that "llama-cpp-server" is mentioned. [Llama.cpp](https://github.com/ggerganov/llama.cpp) was developed by Georgi Gerganov. It implements Meta’s LLaMa architecture in efficient C/C++. and the "cpp" part in the name is for C Plus Plus. You can read move about what Llama.cpp does and how it helps [here](https://pyimagesearch.com/2024/08/26/llama-cpp-the-ultimate-guide-to-efficient-llm-inference-and-applications/). 
-You may also spot in the YAML that we mount the Persistent Volume Claim we created earlier on the path /models. We then use the "curl" command to pull down the TinyLlama model into that location, from Hugging Face. So, we shall be using TinyLlama in Llama.cpp. But, Llama.cpp can support other model types too, not just Llama models. You could, for example, bring down a version of the IBM Granite models, in "GGUF" format, and Llama.cpp could use that instead. You don't need to only run Llama models with Llama.cpp, but you do need to use the GGUF format models for the Llama.cpp server to be able to serve them up. 
-To use a different model, we could change or add another "curl" statement, and get the model into the /models path. Once done, we can change the "args" to point to whichever model we want to run. You can see some other arguements being used there too. You can see the various arguments available to be used [here](https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md). The "-c" set the size of the prompt context to the default of 4096, and the "-t" sets the number of threads to use during generation to 16. With environments where more threads can be usefully used, you may want to alter that value and see if you can improve the performance of the generated response. Lots of other parameters also available to play with as you like!
-
-### 1.3 Create a service
-
-For the communication you will create a service as well as a route:
-
-**Networking** -> **Services** -> **Create Service**
-
-Replace the default with:
-
-```yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: "llama-service"
-  labels:
-    app: "llama-service"
-spec:
-  type: "ClusterIP"
-  ports:
-    - name: llama-cpp-server
-      port: 8080
-      protocol: TCP
-      targetPort: 8080
-  selector:
-    app: "llama-cpp-server"
+https://github.com/DSpurway/RAG-with-Notebook
 ```
+Now click the "Show advanced Git options" (don't worry, not very advanced!):
 
-Click Create!
+![image](imaged/git_repo_url.png)
 
-### 1.4 Create the route
-
-Finally you'll create a route to your deployment
-
-**Networking** -> **Routes** -> **Create Route**
-
-**YAML view** radio button and replace the default with
-
-```yaml
-kind: Route
-apiVersion: route.openshift.io/v1
-metadata:
-  name: llama-cpp
-  labels:
-    app: llama-service
-spec:
-  to:
-    kind: Service
-    name: llama-service
-  tls: null
-  port:
-    targetPort: llama-cpp-server
+Next, add in the Context directory, where there is a Dockerfile it will pick up:
 ```
-  
-Click Create!
+/Part2-RAG-Sales-Manual/llama-cpp-server
+```
+![image](images/context_dir.png)
+
+We don't need this in an "application", so delete the "Application Name", and change the Name for the component we are adding to:
+```
+llama-cpp-server
+```
+![image](images/create_from_dockerfile.png)
+
+Now, click "Create" at the bottom of that screen!
+
+This will take a couple of minutes, as we need to use the Python ecosystem to gather and install torch and openblas before compiling the llama.cpp server (the "cpp" stands for C Plus Plus, or C++, as it needs compiled in C++!), download the TinyLlama model from Huggingface in GGUF format, and then start up the server to serve up that model. 
+
+While the build is going, we can add the storage it will need, which we made earlier, but could not attach at the time. Use the three dots until the container that is building to give a list of options, and select "Add Storage"
+
+![image](images/add_storage.png)
+
+
 
 If you now go to the developer view and watch the Topology you can see the llama-cpp server represented as a circle with a dark blue ring if everything deployed correctly:
 
