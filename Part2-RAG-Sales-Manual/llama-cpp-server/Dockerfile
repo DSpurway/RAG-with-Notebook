@@ -11,8 +11,8 @@ RUN pip3.12 install --prefer-binary make cmake torch openblas --extra-index-url=
 #RUN make install
 #WORKDIR /
 
-ENV BLAS_LIBRARIES=/opt/OpenBLAS/lib/libopenblas.so
-ENV BLAS_INCLUDE_DIRS=/opt/OpenBLAS/include
+#ENV BLAS_LIBRARIES=/opt/OpenBLAS/lib/libopenblas.so
+#ENV BLAS_INCLUDE_DIRS=/opt/OpenBLAS/include
 
 RUN git clone https://github.com/ggml-org/llama.cpp.git
 WORKDIR llama.cpp
