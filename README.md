@@ -103,7 +103,7 @@ https://github.com/DSpurway/RAG-with-Notebook
 ```
 Now click the "Show advanced Git options" (don't worry, not very advanced!):
 
-![image](imaged/git_repo_url.png)
+![image](images/git_repo_url.png)
 
 Next, add in the Context directory, where there is a Dockerfile it will pick up:
 ```
