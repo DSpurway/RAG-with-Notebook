@@ -1,4 +1,3 @@
-#FROM registry.access.redhat.com/ubi9/ubi as builder
 FROM registry.access.redhat.com/ubi9/ubi
 
 RUN dnf -y update && dnf install -y git automake gcc gcc-c++ llvm-toolset ninja-build python3.12 python3.12-pip python3.12-devel gfortran curl-devel wget
@@ -6,16 +5,6 @@ RUN python3.12 -m venv .venv
 RUN source .venv/bin/activate && pip install --prefer-binary make cmake torch openblas --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux
 ENV PATH="/.venv/bin:$PATH"
 ENV LD_LIBRARY_PATH=/.venv/lib/python3.12/site-packages/openblas/lib:$LD_LIBRARY_PATH
-
-#RUN git clone --recursive https://github.com/OpenMathLib/OpenBLAS.git
-#WORKDIR OpenBLAS
-#RUN git checkout v0.3.30
-#RUN make -j16 TARGET=POWER10 BINARY=64 USE_OPENMP=1 USE_THREAD=1 NUM_THREADS=120 DYNAMIC_ARCH=1 INTERFACE64=0
-#RUN make install
-#WORKDIR /
-
-#ENV BLAS_LIBRARIES=/opt/OpenBLAS/lib/libopenblas.so
-#ENV BLAS_INCLUDE_DIRS=/opt/OpenBLAS/include
 
 RUN git clone https://github.com/ggml-org/llama.cpp.git
 WORKDIR llama.cpp
