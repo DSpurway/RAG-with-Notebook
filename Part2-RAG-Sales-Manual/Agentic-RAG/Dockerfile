@@ -1,6 +1,6 @@
 FROM registry.access.redhat.com/ubi9/ubi
 
-RUN dnf -y update && dnf install -y  make cmake automake gcc gcc-c++ llvm-toolset ninja-build python3.12 python3.12-pip python3.12-devel
+RUN dnf -y update && dnf install -y make cmake automake gcc gcc-c++ llvm-toolset ninja-build python3.12 python3.12-pip python3.12-devel gfortran
 RUN python3.12 -m venv .venv
 RUN source .venv/bin/activate && pip install --prefer-binary torch openblas pymilvus sentence-transformers llama-cpp-python langchain langchain-community jupyter --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux
 ENV PATH="/.venv/bin:$PATH"
