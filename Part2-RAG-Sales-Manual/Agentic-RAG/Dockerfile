@@ -8,7 +8,6 @@ ENV LD_LIBRARY_PATH=/.venv/lib/python3.12/site-packages/openblas/lib:/.venv/lib/
 
 RUN git clone https://github.com/abetlen/llama-cpp-python.git
 WORKDIR llama-cpp-python
-RUN git submodule update --remote vendor\llama.cpp
 RUN LD_LIBRARY_PATH=/opt/lib cmake -B build \
     -DGGML_BLAS=ON \
     -DGGML_BLAS_VENDOR=OpenBLAS \
