@@ -4,7 +4,7 @@ RUN dnf -y update && dnf install -y make cmake automake gcc gcc-c++ llvm-toolset
 RUN python3.12 -m venv .venv
 RUN source .venv/bin/activate && pip install --prefer-binary torch openblas libprotobuf==4.25.8 pymilvus sentence-transformers llama-cpp-python langchain langchain-community langchain-huggingface jupyter --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux
 ENV PATH="/.venv/bin:$PATH"
-ENV LD_LIBRARY_PATH=/.venv/lib/python3.12/site-packages/openblas/lib:/.venv/lib/python3.12/site-packages/libprotobuf:$LD_LIBRARY_PATH
+ENV LD_LIBRARY_PATH=/.venv/lib/python3.12/site-packages/openblas/lib:/.venv/lib/python3.12/site-packages/libprotobuf/lib64:$LD_LIBRARY_PATH
 
 RUN mkdir -p /.local && chmod -R a+rwx /.local
 RUN mkdir -p /.venv/notebooks && chmod -R a+rwx /.venv/notebooks
