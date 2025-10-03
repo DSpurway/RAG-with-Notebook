@@ -6,7 +6,7 @@ RUN source .venv/bin/activate && pip install --prefer-binary uv torch openblas p
 ENV PATH="/.venv/bin:$PATH"
 ENV LD_LIBRARY_PATH=/.venv/lib/python3.12/site-packages/openblas/lib:/.venv/lib/python3.12/site-packages/libprotobuf/lib64:$LD_LIBRARY_PATH
 
-RUN git clone https://github.com/abetlen/llama-cpp-python.git
+RUN git clone --recursive https://github.com/abetlen/llama-cpp-python.git
 WORKDIR llama-cpp-python
 RUN uv pip install .
 
