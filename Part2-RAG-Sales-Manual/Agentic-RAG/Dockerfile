@@ -2,13 +2,9 @@ FROM registry.access.redhat.com/ubi9/ubi
 
 RUN dnf -y update && dnf install -y git make cmake automake gcc gcc-c++ llvm-toolset ninja-build python3.12 python3.12-pip python3.12-devel gfortran 
 RUN python3.12 -m venv .venv
-RUN source .venv/bin/activate && pip install --prefer-binary uv torch openblas pymilvus sentence-transformers langchain langchain-community langchain-huggingface jupyter --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux
+RUN source .venv/bin/activate && pip install --prefer-binary llama-cpp-python==0.3.14 torch openblas pymilvus sentence-transformers langchain langchain-community langchain-huggingface jupyter --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux
 ENV PATH="/.venv/bin:$PATH"
 ENV LD_LIBRARY_PATH=/.venv/lib/python3.12/site-packages/openblas/lib:/.venv/lib/python3.12/site-packages/libprotobuf/lib64:$LD_LIBRARY_PATH
-
-RUN git clone --recursive https://github.com/abetlen/llama-cpp-python.git
-WORKDIR llama-cpp-python
-RUN uv pip install .
 
 RUN mkdir -p /.local && chmod -R a+rwx /.local
 RUN mkdir -p /.venv/notebooks && chmod -R a+rwx /.venv/notebooks
