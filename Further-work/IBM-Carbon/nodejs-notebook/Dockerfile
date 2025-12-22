@@ -14,6 +14,7 @@ ENV PATH="/.venv/bin:$PATH"
 RUN mkdir -p /.local && chmod -R a+rwx /.local
 RUN mkdir -p /.venv/notebooks && chmod -R a+rwx /.venv/notebooks
 WORKDIR /.venv/notebooks
-RUN npm install --save jupyter-js-notebook
+RUN npm install -g --unsafe-perm ijavascript
+RUN ijsinstall --install=global
 
 CMD ["jupyter", "lab", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root", "--notebook-dir=/.venv/notebooks", "--NotebookApp.token=''", "--NotebookApp.allow_origin='*'"]
