@@ -6,7 +6,7 @@ RUN python3.12 -m venv .venv
 RUN source .venv/bin/activate && pip install --upgrade pip
 #RUN source .venv/bin/activate && pip install --prefer-binary llama-cpp-python==0.3.14 torch openblas pymilvus sentence-transformers langchain langchain-community langchain-huggingface jupyter --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux
 RUN source .venv/bin/activate && pip install --prefer-binary nodejs jupyter deno --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux
-
+RUN source .venv/bin/activate && deno jupyter --install
 ENV PATH="/.venv/bin:$PATH"
 #ENV LD_LIBRARY_PATH=/.venv/lib/python3.12/site-packages/openblas/lib:/.venv/lib/python3.12/site-packages/libprotobuf/lib64:$LD_LIBRARY_PATH
 
