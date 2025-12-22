@@ -5,10 +5,9 @@ RUN dnf -y update && dnf install -y python3.12 python3.12-pip python3.12-devel
 
 RUN python3.12 -m venv .venv
 #RUN source .venv/bin/activate && pip install --prefer-binary llama-cpp-python==0.3.14 torch openblas pymilvus sentence-transformers langchain langchain-community langchain-huggingface jupyter --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux
+ENV PATH="/.venv/bin:$PATH"
 
 RUN source activate && pip install --prefer-binary nodejs --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux
-
-ENV PATH="/.venv/bin:$PATH"
 
 RUN mkdir -p /.local && chmod -R a+rwx /.local
 RUN mkdir -p /.venv/notebooks && chmod -R a+rwx /.venv/notebooks
