@@ -13,6 +13,7 @@ RUN mkdir -p /.local && chmod -R a+rwx /.local
 RUN mkdir -p /.venv/notebooks && chmod -R a+rwx /.venv/notebooks
 WORKDIR /.venv/notebooks
 
+RUN npm install -g npm@11.7.0
 RUN npm install --save jupyter-js-notebook
 RUN source .venv/bin/activate && pip install --upgrade pip
 RUN source .venv/bin/activate && pip install --prefer-binary jupyterlab --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux
