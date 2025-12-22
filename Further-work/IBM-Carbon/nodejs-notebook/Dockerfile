@@ -6,7 +6,7 @@ RUN dnf -y update && dnf install -y python3.12 python3.12-pip python3.12-devel n
 RUN python3.12 -m venv .venv
 #RUN source .venv/bin/activate && pip install --prefer-binary llama-cpp-python==0.3.14 torch openblas pymilvus sentence-transformers langchain langchain-community langchain-huggingface jupyter --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux
 RUN source .venv/bin/activate && pip install --upgrade pip
-RUN source .venv/bin/activate && pip install --prefer-binary jupyter --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux
+RUN source .venv/bin/activate && pip install --prefer-binary jupyterlab/notebook --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux
 
 ENV PATH="/.venv/bin:$PATH"
 #ENV LD_LIBRARY_PATH=/.venv/lib/python3.12/site-packages/openblas/lib:/.venv/lib/python3.12/site-packages/libprotobuf/lib64:$LD_LIBRARY_PATH
@@ -14,6 +14,6 @@ ENV PATH="/.venv/bin:$PATH"
 RUN mkdir -p /.local && chmod -R a+rwx /.local
 RUN mkdir -p /.venv/notebooks && chmod -R a+rwx /.venv/notebooks
 WORKDIR /.venv/notebooks
-RUN npm update && npm install --save jupyter-js-notebook
+#RUN npm update && npm install --save jupyter-js-notebook
 
 CMD ["jupyter", "notebook", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root", "--notebook-dir=/.venv/notebooks", "--NotebookApp.token=''", "--NotebookApp.allow_origin='*'"]
