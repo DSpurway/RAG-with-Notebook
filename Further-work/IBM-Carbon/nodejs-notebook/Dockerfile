@@ -9,8 +9,7 @@ RUN python3.12 -m venv .venv
 ENV PATH="/.venv/bin:$PATH"
 #ENV LD_LIBRARY_PATH=/.venv/lib/python3.12/site-packages/openblas/lib:/.venv/lib/python3.12/site-packages/libprotobuf/lib64:$LD_LIBRARY_PATH
 
-RUN source activate && npm install -g npm@11.7.0
-RUN source activate && npm install --save jupyter-js-notebook
+RUN source activate && npm install jupyter-js-notebook
 RUN source activate && pip install --upgrade pip
 RUN source activate && pip install --prefer-binary jupyterlab --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux
 
