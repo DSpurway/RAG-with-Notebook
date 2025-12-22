@@ -5,9 +5,10 @@ RUN dnf -y update && dnf install -y python3.12 python3.12-pip python3.12-devel u
 RUN python3.12 -m venv .venv
 RUN source .venv/bin/activate && pip install --upgrade pip
 #RUN source .venv/bin/activate && pip install --prefer-binary llama-cpp-python==0.3.14 torch openblas pymilvus sentence-transformers langchain langchain-community langchain-huggingface jupyter --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux
-ENV DENO_INSTALL="/.venv"
-RUN source .venv/bin/activate && pip install --prefer-binary nodejs jupyter deno --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux
 
+RUN source .venv/bin/activate && pip install --prefer-binary nodejs jupyter --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux
+ENV DENO_INSTALL="/.venv"
+RUN source .venv/bin/activate && npm install -g deno
 #RUN source .venv/bin/activate && curl -fsSL https://deno.land/install.sh | sh
 
 ENV PATH="/.venv/bin:$PATH"
