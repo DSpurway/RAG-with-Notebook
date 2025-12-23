@@ -18,5 +18,6 @@ RUN source activate && pip install --upgrade pip
 RUN source activate && pip install --prefer-binary jupyterlab --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux
 
 RUN git clone https://github.com/carbon-design-system/carbon-tutorial-nextjs.git
+RUN npm install --global yarn
 
 CMD ["jupyter", "lab", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root", "--notebook-dir=/.venv/notebooks", "--NotebookApp.token=''", "--NotebookApp.allow_origin='*'"]
