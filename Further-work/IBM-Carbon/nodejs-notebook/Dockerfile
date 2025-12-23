@@ -22,9 +22,10 @@ RUN npm install --global yarn
 WORKDIR /.venv/notebooks/carbon-tutorial-nextjs
 RUN yarn
 RUN yarn build
-RUN yarn dev
 RUN yarn add @carbon/react@1.33.0
-RUN yarn dev
+RUN yarn add sass@1.63.6
+RUN yarn add @carbon/icons-react
+
 EXPOSE 3000
 
 CMD ["jupyter", "lab", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root", "--notebook-dir=/.venv/notebooks", "--NotebookApp.token=''", "--NotebookApp.allow_origin='*'"]
