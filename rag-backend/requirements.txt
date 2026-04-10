@@ -1,0 +1,27 @@
+# Web Framework
+Flask==3.0.0
+flask-cors==4.0.0
+gunicorn==21.2.0
+
+# Vector Database
+pymilvus==2.3.4
+
+# LangChain and RAG
+langchain==0.1.0
+langchain-community==0.0.10
+langchain-core==0.1.10
+
+# Embeddings
+sentence-transformers==2.2.2
+transformers==4.36.2
+torch==2.1.2
+
+# Document Processing
+pypdf==3.17.4
+pypdf2==3.0.1
+
+# HTTP Client
+requests==2.31.0
+
+# Utilities
+python-dotenv==1.0.0
