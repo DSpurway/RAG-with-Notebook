@@ -107,7 +107,7 @@ Now click the "Show advanced Git options" (don't worry, not very advanced!):
 
 Next, add in the Context directory, where there is a Dockerfile it will pick up:
 ```
-/Part2-RAG-Sales-Manual/llama-cpp-server
+/Part3-RAG-Sales-Manual/llama-cpp-server
 ```
 ![image](images/contect_dir.png)
 
