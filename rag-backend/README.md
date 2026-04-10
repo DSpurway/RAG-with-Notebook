@@ -8,8 +8,30 @@ This backend service replaces the previous architecture of 5 separate Flask micr
 
 - Collection management (list, drop)
 - PDF document loading into vector database
+- **Web page scraping and loading (NEW!)** - Load content from IBM Docs pages
 - Document search and retrieval
 - LLM prompt generation
+
+## 🆕 New Feature: Web Scraping
+
+The backend now supports loading content directly from web pages (especially IBM Docs pages) into the vector database. This allows you to:
+
+- Keep your knowledge base up-to-date with live documentation
+- Load IBM announcements and product updates automatically
+- Scrape multiple pages at once
+- Access dynamic content that was previously unavailable
+
+**See [WEB_SCRAPING_FEATURE.md](WEB_SCRAPING_FEATURE.md) for detailed documentation.**
+
+Quick example:
+```bash
+curl -X POST http://localhost:8080/api/load-url \
+  -H "Content-Type: application/json" \
+  -d '{
+    "url": "https://www.ibm.com/docs/en/announcements/power-s1014-9105-41b",
+    "collection_name": "ibm_announcements"
+  }'
+```
 
 ## Architecture
 
@@ -84,6 +106,58 @@ Response:
   "message": "Successfully loaded HPE-ProLiant-DL380-Gen11",
   "chunks": 42,
   "collection": "sales_manuals"
+}
+```
+
+#### Load Web Page (NEW)
+```bash
+POST /api/load-url
+Content-Type: application/json
+
+{
+  "url": "https://www.ibm.com/docs/en/announcements/power-s1014-9105-41b",
+  "collection_name": "ibm_announcements"
+}
+```
+
+Response:
+```json
+{
+  "success": true,
+  "message": "Successfully loaded content from URL",
+  "title": "IBM Power S1014 (9105-41B) announcement",
+  "chunks": 15,
+  "collection": "ibm_announcements",
+  "url": "https://www.ibm.com/docs/en/announcements/power-s1014-9105-41b"
+}
+```
+
+#### Load Multiple Web Pages (NEW)
+```bash
+POST /api/load-multiple-urls
+Content-Type: application/json
+
+{
+  "urls": [
+    "https://www.ibm.com/docs/en/announcements/power-s1014-9105-41b",
+    "https://www.ibm.com/docs/en/announcements/power-s1022-9105-22a"
+  ],
+  "collection_name": "ibm_announcements"
+}
+```
+
+Response:
+```json
+{
+  "success": true,
+  "message": "Successfully loaded 2 URLs",
+  "pages_loaded": 2,
+  "total_chunks": 28,
+  "collection": "ibm_announcements",
+  "titles": [
+    "IBM Power S1014 (9105-41B) announcement",
+    "IBM Power S1022 (9105-22A) announcement"
+  ]
 }
 ```
 
@@ -239,6 +313,10 @@ The service will start on `http://localhost:8080`
 ### Document Processing
 - pypdf 3.17.4 - PDF parsing
 - pypdf2 3.0.1 - Additional PDF support
+
+### Web Scraping (NEW)
+- beautifulsoup4 4.12.2 - HTML parsing
+- lxml 5.1.0 - Fast XML/HTML parser
 
 ### Utilities
 - requests 2.31.0 - HTTP client

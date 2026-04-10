@@ -14,6 +14,7 @@ from langchain_core.load import dumps
 import requests
 import os
 import logging
+from web_scraper import IBMDocsScraper, create_langchain_documents, IBMDocsScraperError
 
 app = Flask(__name__)
 
@@ -161,6 +162,138 @@ def load_pdf():
         
     except Exception as e:
         logger.error(f"Error loading PDF: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/load-url', methods=['POST'])
+def load_url():
+    """Load content from a web URL into the vector database"""
+    try:
+        data = request.get_json()
+        url = data.get('url')
+        collection_name = data.get('collection_name', 'web_docs')
+        
+        if not url:
+            return jsonify({'error': 'url is required'}), 400
+        
+        if not connect_milvus():
+            return jsonify({'error': 'Failed to connect to Milvus'}), 500
+        
+        logger.info(f"Loading content from URL: {url}")
+        
+        # Scrape the web page
+        scraper = IBMDocsScraper()
+        try:
+            scraped_data = scraper.scrape_url(url)
+        except IBMDocsScraperError as e:
+            logger.error(f"Scraping failed: {e}")
+            return jsonify({'error': f'Failed to scrape URL: {str(e)}'}), 400
+        
+        logger.info(f"Successfully scraped: {scraped_data['title']}")
+        
+        # Convert to LangChain documents
+        docs = create_langchain_documents(scraped_data)
+        
+        # Split documents into chunks
+        text_splitter = CharacterTextSplitter(
+            separator="\n",
+            chunk_size=768,
+            chunk_overlap=100
+        )
+        docs = text_splitter.split_documents(docs)
+        
+        logger.info(f"Split into {len(docs)} chunks")
+        
+        # Get embeddings and create vector store
+        embeddings = get_embeddings()
+        
+        logger.info("Creating vector store...")
+        vector_store = Milvus.from_documents(
+            docs,
+            embedding=embeddings,
+            collection_name=collection_name,
+            connection_args={"host": MILVUS_HOST, "port": MILVUS_PORT}
+        )
+        
+        logger.info(f"Successfully loaded content from {url} into collection {collection_name}")
+        
+        return jsonify({
+            'success': True,
+            'message': f'Successfully loaded content from URL',
+            'title': scraped_data['title'],
+            'chunks': len(docs),
+            'collection': collection_name,
+            'url': url
+        })
+        
+    except Exception as e:
+        logger.error(f"Error loading URL: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/load-multiple-urls', methods=['POST'])
+def load_multiple_urls():
+    """Load content from multiple web URLs into the vector database"""
+    try:
+        data = request.get_json()
+        urls = data.get('urls', [])
+        collection_name = data.get('collection_name', 'web_docs')
+        
+        if not urls or not isinstance(urls, list):
+            return jsonify({'error': 'urls array is required'}), 400
+        
+        if not connect_milvus():
+            return jsonify({'error': 'Failed to connect to Milvus'}), 500
+        
+        logger.info(f"Loading content from {len(urls)} URLs")
+        
+        # Scrape all URLs
+        scraper = IBMDocsScraper()
+        scraped_results = scraper.scrape_multiple_urls(urls)
+        
+        if not scraped_results:
+            return jsonify({'error': 'Failed to scrape any URLs'}), 400
+        
+        logger.info(f"Successfully scraped {len(scraped_results)} pages")
+        
+        # Convert all to LangChain documents
+        all_docs = []
+        for scraped_data in scraped_results:
+            docs = create_langchain_documents(scraped_data)
+            all_docs.extend(docs)
+        
+        # Split documents into chunks
+        text_splitter = CharacterTextSplitter(
+            separator="\n",
+            chunk_size=768,
+            chunk_overlap=100
+        )
+        all_docs = text_splitter.split_documents(all_docs)
+        
+        logger.info(f"Split into {len(all_docs)} total chunks")
+        
+        # Get embeddings and create vector store
+        embeddings = get_embeddings()
+        
+        logger.info("Creating vector store...")
+        vector_store = Milvus.from_documents(
+            all_docs,
+            embedding=embeddings,
+            collection_name=collection_name,
+            connection_args={"host": MILVUS_HOST, "port": MILVUS_PORT}
+        )
+        
+        logger.info(f"Successfully loaded {len(scraped_results)} URLs into collection {collection_name}")
+        
+        return jsonify({
+            'success': True,
+            'message': f'Successfully loaded {len(scraped_results)} URLs',
+            'pages_loaded': len(scraped_results),
+            'total_chunks': len(all_docs),
+            'collection': collection_name,
+            'titles': [r['title'] for r in scraped_results]
+        })
+        
+    except Exception as e:
+        logger.error(f"Error loading multiple URLs: {e}")
         return jsonify({'error': str(e)}), 500
 
 # ============================================================================
@@ -322,7 +455,7 @@ def index():
     """Root endpoint"""
     return jsonify({
         'service': 'RAG Backend API',
-        'version': '1.0.0',
+        'version': '1.1.0',
         'endpoints': {
             'collections': {
                 'GET /api/collections': 'List all collections',
@@ -330,6 +463,8 @@ def index():
             },
             'documents': {
                 'POST /api/load-pdf': 'Load PDF into vector database',
+                'POST /api/load-url': 'Load web page content into vector database',
+                'POST /api/load-multiple-urls': 'Load multiple web pages into vector database',
                 'POST /api/search': 'Search for relevant documents'
             },
             'generation': {

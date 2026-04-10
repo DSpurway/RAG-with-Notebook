@@ -20,6 +20,10 @@ torch==2.1.2
 pypdf==3.17.4
 pypdf2==3.0.1
 
+# Web Scraping
+beautifulsoup4==4.12.2
+lxml==5.1.0
+
 # HTTP Client
 requests==2.31.0
 

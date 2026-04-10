@@ -15,7 +15,7 @@ import {
 } from '@carbon/react';
 import Link from 'next/link';
 
-const TutorialHeader = () => (
+const Header = () => (
   <HeaderContainer
     render={({ isSideNavExpanded, onClickSideNavExpand }) => (
       <Header aria-label="Carbon Tutorial">
@@ -67,4 +67,4 @@ const TutorialHeader = () => (
   />
 );
 
-export default TutorialHeader;
+export default Header;
