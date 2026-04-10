@@ -26,12 +26,13 @@ WORKDIR /app
 COPY requirements.txt .
 
 # Install Python dependencies
-# Ensure setuptools/pkg_resources is present for source builds, then install torch/openblas
-# from IBM Power wheels first, then install the remaining requirements
+# Use IBM Power wheels for torch/openblas and the existing Power-compatible repo for
+# pymilvus + sentence-transformers, then install the remaining requirements.
 RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
     pip install --no-cache-dir --prefer-binary torch openblas --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux && \
-    grep -v "^torch==" requirements.txt > requirements-no-torch.txt && \
-    pip install --no-cache-dir -r requirements-no-torch.txt
+    pip install --no-cache-dir --prefer-binary pymilvus sentence-transformers --extra-index-url=https://repo.fury.io/mgiessing && \
+    grep -Ev "^(torch|pymilvus|sentence-transformers)==" requirements.txt > requirements-base.txt && \
+    pip install --no-cache-dir -r requirements-base.txt
 
 # Copy application code
 COPY app.py .
