@@ -26,8 +26,9 @@ WORKDIR /app
 COPY requirements.txt .
 
 # Install Python dependencies
-# Install torch/openblas from IBM Power wheels first, then install the remaining requirements
-RUN pip install --no-cache-dir --upgrade pip && \
+# Ensure setuptools/pkg_resources is present for source builds, then install torch/openblas
+# from IBM Power wheels first, then install the remaining requirements
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
     pip install --no-cache-dir --prefer-binary torch openblas --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux && \
     grep -v "^torch==" requirements.txt > requirements-no-torch.txt && \
     pip install --no-cache-dir -r requirements-no-torch.txt
