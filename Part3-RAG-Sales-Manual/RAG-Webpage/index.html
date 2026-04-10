@@ -4,6 +4,67 @@
 <html>
   <head>
     <title>GenAI with Sales Manuals Demo Page</title>
+    <script src="/config.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+      h1 {
+        color: #0f62fe;
+        border-bottom: 3px solid #0f62fe;
+        padding-bottom: 10px;
+      }
+      h2 {
+        color: #161616;
+        margin-top: 30px;
+      }
+      button {
+        background-color: #0f62fe;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        margin: 5px;
+        cursor: pointer;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+      button:hover {
+        background-color: #0353e9;
+      }
+      button:disabled {
+        background-color: #c6c6c6;
+        cursor: not-allowed;
+      }
+      input[type="text"], select {
+        padding: 8px;
+        margin: 5px;
+        border: 1px solid #8d8d8d;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+      .status {
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 4px;
+        background-color: #e0e0e0;
+      }
+      .success {
+        background-color: #d4f1d4;
+        color: #0e6027;
+      }
+      .error {
+        background-color: #ffd7d9;
+        color: #750e13;
+      }
+      .loading {
+        background-color: #d0e2ff;
+        color: #001d6c;
+      }
+    </style>
   </head>
   <body>
     <h1>GenAI with Sales Manuals Demo Page</h1>
@@ -17,16 +78,22 @@
 
     <script>
       function myRAG_list_collections_func() {
-        fetch("https://rag-list-collections-llm-on-techzone.apps.p1293.cecc.ihost.com/")
-          .then(response => response.json())
+        const statusEl = document.getElementById("RAG_list_collections_id");
+        statusEl.innerHTML = '<p class="status loading">Loading collections...</p>';
+        
+        fetch(window.RAG_CONFIG.listCollectionsUrl + "/")
+          .then(response => {
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return response.json();
+          })
           .then(data => {
             console.log(data);
-            document
-                .getElementById("RAG_list_collections_id")
-                .insertAdjacentHTML("beforeend", `<p>${data.result}</p>`);
-            })
+            const collections = Array.isArray(data.result) ? data.result.join(', ') : data.result;
+            statusEl.innerHTML = `<p class="status success">Collections: ${collections || 'None found'}</p>`;
+          })
           .catch(error => {
             console.error("Error fetching data:", error);
+            statusEl.innerHTML = `<p class="status error">Error: ${error.message}</p>`;
           });
       }
     </script>
@@ -41,17 +108,28 @@
 
     <script>
       function myRAG_drop_collections_func() {
-        var collectionName = document.getElementById("collection").value;
-        fetch("https://rag-drop-collection-llm-on-techzone.apps.p1293.cecc.ihost.com/?Collection=" + collectionName)
-          .then(response => response.json())
+        const collectionName = document.getElementById("collection").value;
+        if (!collectionName) {
+          alert("Please enter a collection name");
+          return;
+        }
+        
+        const statusEl = document.getElementById("RAG_drop_collections_id");
+        statusEl.innerHTML = '<p class="status loading">Dropping collection...</p>';
+        
+        fetch(window.RAG_CONFIG.dropCollectionUrl + "/?Collection=" + collectionName)
+          .then(response => {
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return response.json();
+          })
           .then(data => {
             console.log(data);
-            document
-              .getElementById("RAG_drop_collections_id")
-              .insertAdjacentHTML("beforeend", `<p>${data.result}</p>`);
+            statusEl.innerHTML = `<p class="status success">${data.result}</p>`;
+            document.getElementById("collection").value = '';
           })
           .catch(error => {
             console.error("Error fetching data:", error);
+            statusEl.innerHTML = `<p class="status error">Error: ${error.message}</p>`;
           });
       }
     </script>
@@ -69,18 +147,32 @@
 
     <script>
       function myRAG_loader_func(Server_Name) {
-        document.getElementById(Server_Name).innerHTML = "Loading " + Server_Name + ".pdf. This takes a few minutes.";
-        fetch("https://rag-loader-llm-on-techzone.apps.p1293.cecc.ihost.com/?Server_Name=" + Server_Name, { signal: AbortSignal.timeout(500000) })
-          .then(response => response.json())
+        const button = document.getElementById(Server_Name);
+        const originalText = button.innerHTML;
+        button.disabled = true;
+        button.innerHTML = "Loading " + Server_Name + ".pdf...";
+        
+        const statusEl = document.getElementById("RAG_loader_server_name_id");
+        statusEl.innerHTML = `<p class="status loading">Loading ${Server_Name}.pdf into vector database. This may take several minutes...</p>`;
+        
+        fetch(window.RAG_CONFIG.loaderUrl + "/?Server_Name=" + Server_Name, {
+          signal: AbortSignal.timeout(500000)
+        })
+          .then(response => {
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return response.json();
+          })
           .then(data => {
             console.log(data);
-            document
-              .getElementById("RAG_loader_id")
-              .insertAdjacentHTML("beforeend", `<p>${data.result}</p>`);
-            document.getElementById(Server_Name).innerHTML = "&#10003;";
+            statusEl.innerHTML = `<p class="status success">${Server_Name} loaded successfully! Result: ${data.result}</p>`;
+            button.innerHTML = "✓ " + originalText;
+            button.disabled = false;
           })
           .catch(error => {
             console.error("Error fetching data:", error);
+            statusEl.innerHTML = `<p class="status error">Error loading ${Server_Name}: ${error.message}. Check pod logs for details.</p>`;
+            button.innerHTML = originalText;
+            button.disabled = false;
           });
       }
     </script>
@@ -106,11 +198,17 @@
     <script>
       var chunk_contents;
       function myRAG_get_docs_func() {
+        const Server_Name = document.getElementById("Server_Name").value;
+        const Question = document.getElementById("Question").value;
+        const statusEl = document.getElementById("RAG_get_docs_id");
         
-        var Server_Name = document.getElementById("Server_Name").value;
-        var Question = document.getElementById("Question").value;
-        fetch("https://rag-get-docs-llm-on-techzone.apps.p1293.cecc.ihost.com/?Server_Name=" + Server_Name +"&Question=\"" +Question +"\"")
-          .then(response => response.json())
+        statusEl.innerHTML = '<p class="status loading">Retrieving relevant documents...</p>';
+        
+        fetch(window.RAG_CONFIG.getDocsUrl + "/?Server_Name=" + Server_Name + "&Question=\"" + Question + "\"")
+          .then(response => {
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return response.json();
+          })
           .then(data => {
             console.log(data.result);
             console.log(data.docs);
@@ -144,12 +242,11 @@
             }
 
             console.log(chunk_contents);
-            document
-              .getElementById("RAG_get_docs_id")
-              .insertAdjacentHTML("beforeend", `<p id="RAG_chunk_contents_id">${chunk_contents}</p>`);
+            statusEl.innerHTML = `<div class="status success"><p><strong>Retrieved ${pageContentIndices.length} chunks:</strong></p><div id="RAG_chunk_contents_id">${chunk_contents}</div></div>`;
           })
           .catch(error => {
             console.error("Error fetching data:", error);
+            statusEl.innerHTML = `<p class="status error">Error retrieving documents: ${error.message}</p>`;
           });
       }
     </script>
@@ -199,24 +296,33 @@
 
     <script>
       function myRAG_send_prompt_func() {
+        if (!Prompt) {
+          alert("Please build the prompt first by clicking the button above");
+          return;
+        }
+        
+        const statusEl = document.getElementById("RAG_send_prompt_id");
+        statusEl.innerHTML = '<p class="status loading">Sending prompt to LLM... This may take a minute or timeout. Check pod logs if needed.</p>';
+        
         console.log(Prompt);
-        fetch("https://rag-prompt-llm-llm-on-techzone.apps.p1293.cecc.ihost.com", {
+        fetch(window.RAG_CONFIG.promptLlmUrl, {
           method: "POST",
-          timeout: 60,
           body: JSON.stringify(Prompt),
           headers: {
             "Content-type": "application/json; charset=UTF-8"
           }
         })
-          .then(response => response.json())
+          .then(response => {
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return response.json();
+          })
           .then(data => {
             console.log(data);
-            document
-              .getElementById("RAG_send_prompt_id")
-              .insertAdjacentHTML("beforeend", `<p>Result: ${data.result}</p><p>Answer: ${data.answer}</p>`);
+            statusEl.innerHTML = `<div class="status success"><p><strong>Result:</strong> ${data.result}</p><p><strong>Answer:</strong> ${data.answer}</p></div>`;
           })
           .catch(error => {
             console.error("Error fetching data:", error);
+            statusEl.innerHTML = `<p class="status error">Error or timeout: ${error.message}. Check the rag-prompt-llm pod logs for the actual response.</p>`;
           });
       }
     </script>

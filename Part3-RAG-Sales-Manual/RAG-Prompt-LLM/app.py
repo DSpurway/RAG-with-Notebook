@@ -2,11 +2,16 @@ from flask import Flask, request
 from flask_cors import CORS, cross_origin
 import logging
 import requests
+import os
 
 app = Flask(__name__)
-CORS(app, origins=["https://rag-webpage-llm-on-techzone.apps.p1293.cecc.ihost.com"]) 
 
-app = Flask(__name__)
+# Get CORS origin from environment variable or use wildcard for development
+cors_origin = os.environ.get('CORS_ORIGIN', '*')
+if cors_origin == '*':
+    CORS(app)
+else:
+    CORS(app, origins=[cors_origin])
 
 if __name__ != '__main__':
     gunicorn_logger = logging.getLogger('gunicorn.error')
