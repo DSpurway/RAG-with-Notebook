@@ -89,6 +89,27 @@ Click Create! What you are doing there is reserving disk space to hold the Large
 
 ### 1.2 Deployment
 
+**NEW**: We now have a dual-model deployment that includes both TinyLlama (for Part 1) and Granite 4.0 (for Part 2/3) in a single container!
+
+#### Option A: Using the Automated Script (Recommended)
+
+The easiest way to deploy is using the provided script:
+
+```bash
+cd Part1-Deploy-LLM
+chmod +x deploy.sh  # On Linux/Mac
+./deploy.sh
+```
+
+The script will:
+- Build the container with both models
+- Ask which model to use by default (choose TinyLlama for Part 1)
+- Deploy the service
+- Create the route
+- Show you the URL to access the LLM
+
+#### Option B: Using OpenShift Web Console
+
 In the "Developer" view, we can use the "+Add" button to add a deployment of the server for our basic large language model:
 
 ![image](images/Add_to_project.png)
@@ -97,7 +118,7 @@ The page you then get will have a box titled "Git Repository" and you can click 
 
 ![image](images/import_from_git.png)
 
-You can import from David Spurway's repo by putting in the following URL into the Git Repo URL box, but don't hit "create" yet, as we have more to do!
+You can import from this repo by putting in the following URL into the Git Repo URL box, but don't hit "create" yet, as we have more to do!
 ```
 https://github.com/DSpurway/RAG-with-Notebook
 ```
@@ -107,21 +128,78 @@ Now click the "Show advanced Git options" (don't worry, not very advanced!):
 
 Next, add in the Context directory, where there is a Dockerfile it will pick up:
 ```
-/Part3-RAG-Sales-Manual/llama-cpp-server
+/Part1-Deploy-LLM
 ```
 ![image](images/contect_dir.png)
 
+**Note**: We're now using `/Part1-Deploy-LLM` instead of `/Part3-RAG-Sales-Manual/llama-cpp-server`. This new Dockerfile includes **both** TinyLlama and Granite 4.0 models!
+
 We don't need this in an "application", so delete the "Application Name", and change the Name for the component we are adding to:
 ```
-llama-cpp-server
+llama-service
 ```
 ![image](images/create_from_dockerfile.png)
 
 Now, click "Create" at the bottom of that screen!
 
-This will take a couple of minutes, as we need to use the Python ecosystem to gather and install torch and openblas before compiling the llama.cpp server (the "cpp" stands for C Plus Plus, or C++, as it needs compiled in C++!), download the TinyLlama model from Huggingface in GGUF format, and then start up the server to serve up that model. 
+This will take a few minutes, as we need to:
+- Install build dependencies (gcc, cmake, etc.)
+- Compile llama.cpp with OpenBLAS acceleration
+- Download **both** TinyLlama (~1.1GB) and Granite 4.0 Micro (~2.5GB) models
+- Create the startup script for model switching
 
-While the build is going, we can add the storage it will need, which we made earlier, but could not attach at the time. Use the three dots until the container that is building to give a list of options, and select "Add Storage"
+The container will start with **TinyLlama by default**, which is perfect for Part 1 demonstrations.
+
+#### Option C: Using Command Line
+
+```bash
+cd Part1-Deploy-LLM
+
+# Create the build
+oc new-build --name llama-service --binary --strategy docker
+oc start-build llama-service --from-dir=. --follow
+
+# Deploy the service
+oc apply -f llama-deploy.yaml
+oc apply -f llama-svc.yaml
+oc apply -f llama-route.yaml
+
+# Wait for deployment
+oc rollout status deployment/llama-service
+```
+**Note**: You no longer need to add storage manually - both models are now included in the container image!
+
+### 1.3 Switching Between Models
+
+One of the key features of this deployment is the ability to switch between TinyLlama and Granite 4.0 without rebuilding:
+
+#### Switch to Granite (for Part 2/3 RAG)
+```bash
+oc set env deployment/llama-service LLM_MODEL=granite
+```
+
+#### Switch back to TinyLlama (for Part 1 demos)
+```bash
+oc set env deployment/llama-service LLM_MODEL=tinyllama
+```
+
+#### Verify which model is running
+```bash
+oc logs deployment/llama-service | grep "Starting with"
+```
+
+You should see output like:
+- `Starting with TinyLlama (Part 1 - Basic demonstrations)` or
+- `Starting with Granite 4.0 Micro (Part 2/3 - RAG with complex documents)`
+
+**Recommendation**: 
+- Use **TinyLlama** for Part 1 to demonstrate basic LLM capabilities and hallucinations
+- Switch to **Granite** when you deploy the RAG backend in Part 2/3 for better accuracy with complex documents
+
+For more details, see [Part1-Deploy-LLM/README.md](Part1-Deploy-LLM/README.md)
+
+
+**Note**: You no longer need to add storage manually - both models are now included in the container image!
 
 ![image](images/add_storage.png)
 
@@ -135,7 +213,7 @@ And add the mount point of:
 ```
 ![image](images/existing_claim.png)
 
-If you now go to the developer view and watch the Topology you can see the llama-cpp server represented as a circle with a dark blue ring if everything deployed correctly:
+If you now go to the developer view and watch the Topology you can see the llama-service component represented as a circle with a dark blue ring if everything deployed correctly:
 
 Light blue ring: (not yet ready)
 
@@ -182,7 +260,7 @@ You can stay in the same OpenShift project.
 
 You will need your OpenShift login token which you can get after logging in to the WebUI, **click on your username** -> **Copy login command** -> **Login again with your credentials** -> **Display token**
 
-Open the terminal (command prompt or PowerShell) and login to your cluster using the token you just copied. Check at this stage what project you are then connected with. If it is not the project where we put the "llama-cpp-server" instance earlier, change the project to that with:
+Open the terminal (command prompt or PowerShell) and login to your cluster using the token you just copied. Check at this stage what project you are then connected with. If it is not the project where we put the "llama-service" instance earlier, change the project to that with:
 
 ```
 oc project llm-on-techzone

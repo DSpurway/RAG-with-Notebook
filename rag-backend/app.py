@@ -6,15 +6,14 @@ Combines all RAG operations into a single Flask application
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from pymilvus import connections, utility
-from langchain.embeddings import HuggingFaceEmbeddings
-from langchain.vectorstores import Milvus
-from langchain.document_loaders import PyPDFLoader
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.vectorstores import Milvus
+from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain_core.load import dumps
 import requests
 import os
 import logging
-from web_scraper import IBMDocsScraper, create_langchain_documents, IBMDocsScraperError
 
 app = Flask(__name__)
 
@@ -28,6 +27,15 @@ else:
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Optional web scraping support - only import if available
+try:
+    from web_scraper import IBMDocsScraper, create_langchain_documents, IBMDocsScraperError
+    WEB_SCRAPING_AVAILABLE = True
+    logger.info("Web scraping module loaded successfully")
+except ImportError:
+    WEB_SCRAPING_AVAILABLE = False
+    logger.warning("Web scraping module not available. Running in PDF-only mode.")
 
 # Configuration from environment variables
 MILVUS_HOST = os.environ.get('MILVUS_HOST', 'milvus-service')
@@ -167,6 +175,11 @@ def load_pdf():
 @app.route('/api/load-url', methods=['POST'])
 def load_url():
     """Load content from a web URL into the vector database"""
+    if not WEB_SCRAPING_AVAILABLE:
+        return jsonify({
+            'error': 'Web scraping feature not available. Please use PDF loading instead.'
+        }), 501
+    
     try:
         data = request.get_json()
         url = data.get('url')
@@ -232,6 +245,11 @@ def load_url():
 @app.route('/api/load-multiple-urls', methods=['POST'])
 def load_multiple_urls():
     """Load content from multiple web URLs into the vector database"""
+    if not WEB_SCRAPING_AVAILABLE:
+        return jsonify({
+            'error': 'Web scraping feature not available. Please use PDF loading instead.'
+        }), 501
+    
     try:
         data = request.get_json()
         urls = data.get('urls', [])

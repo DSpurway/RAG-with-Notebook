@@ -36,6 +36,7 @@ RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
 
 # Copy application code
 COPY app.py .
+COPY web_scraper.py .
 
 # Create PDF directory
 RUN mkdir -p /app/pdfs
