@@ -1,4 +1,4 @@
-# Multi-stage build for RAG Backend Service
+# Multi-stage build for RAG Backend Service with ChromaDB
 FROM registry.access.redhat.com/ubi9/python-312:latest AS builder
 
 USER root
@@ -9,13 +9,6 @@ RUN dnf install -y \
     gcc-c++ \
     git \
     make \
-    cmake \
-    automake \
-    llvm-toolset \
-    ninja-build \
-    gfortran \
-    curl-devel \
-    wget \
     python3.12-devel \
     && dnf clean all
 
@@ -26,12 +19,10 @@ WORKDIR /app
 COPY requirements.txt .
 
 # Install Python dependencies
-# Use IBM Power wheels for torch/openblas and the existing Power-compatible repo for
-# pymilvus + sentence-transformers, then install the remaining requirements.
+# Use IBM Power-optimized wheels where available for better performance
 RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
-    pip install --no-cache-dir --prefer-binary torch openblas --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux && \
-    pip install --no-cache-dir --prefer-binary pymilvus sentence-transformers --extra-index-url=https://repo.fury.io/mgiessing && \
-    grep -Ev "^(torch|pymilvus|sentence-transformers)==" requirements.txt > requirements-base.txt && \
+    pip install --no-cache-dir --prefer-binary torch openblas sentence-transformers --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux && \
+    grep -Ev "^(torch|sentence-transformers)==" requirements.txt > requirements-base.txt && \
     pip install --no-cache-dir -r requirements-base.txt
 
 # Copy application code
@@ -64,8 +55,7 @@ COPY --from=builder /app/app.py .
 COPY --from=builder /app/pdfs /app/pdfs
 
 # Environment variables with defaults
-ENV MILVUS_HOST=milvus-service \
-    MILVUS_PORT=19530 \
+ENV CHROMA_PERSIST_DIR=/app/chroma_db \
     LLAMA_HOST=llama-service \
     LLAMA_PORT=8080 \
     PDF_DIR=/app/pdfs \

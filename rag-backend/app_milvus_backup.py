@@ -1,14 +1,13 @@
 """
-Consolidated RAG Backend Service with ChromaDB
+Consolidated RAG Backend Service
 Combines all RAG operations into a single Flask application
 """
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import chromadb
-from chromadb.config import Settings
+from pymilvus import connections, utility
 from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_community.vectorstores import Chroma
+from langchain_community.vectorstores import Milvus
 from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain_core.load import dumps
@@ -39,24 +38,13 @@ except ImportError:
     logger.warning("Web scraping module not available. Running in PDF-only mode.")
 
 # Configuration from environment variables
-CHROMA_PERSIST_DIR = os.environ.get('CHROMA_PERSIST_DIR', '/app/chroma_db')
+MILVUS_HOST = os.environ.get('MILVUS_HOST', 'milvus-service')
+MILVUS_PORT = os.environ.get('MILVUS_PORT', '19530')
 LLAMA_HOST = os.environ.get('LLAMA_HOST', 'llama-service')
 LLAMA_PORT = os.environ.get('LLAMA_PORT', '8080')
 
 # PDF directory
 PDF_DIR = os.environ.get('PDF_DIR', '/app/pdfs')
-
-# Initialize ChromaDB client (lazy loading)
-_chroma_client = None
-
-def get_chroma_client():
-    """Lazy load ChromaDB client"""
-    global _chroma_client
-    if _chroma_client is None:
-        logger.info(f"Initializing ChromaDB client at {CHROMA_PERSIST_DIR}")
-        _chroma_client = chromadb.PersistentClient(path=CHROMA_PERSIST_DIR)
-        logger.info("ChromaDB client initialized")
-    return _chroma_client
 
 # Initialize embeddings model (lazy loading)
 _embeddings = None
@@ -70,23 +58,33 @@ def get_embeddings():
         logger.info("Embeddings model loaded")
     return _embeddings
 
+def connect_milvus():
+    """Connect to Milvus database"""
+    try:
+        connections.connect(host=MILVUS_HOST, port=MILVUS_PORT)
+        logger.info(f"Connected to Milvus at {MILVUS_HOST}:{MILVUS_PORT}")
+        return True
+    except Exception as e:
+        logger.error(f"Failed to connect to Milvus: {e}")
+        return False
+
 # ============================================================================
 # COLLECTION MANAGEMENT ENDPOINTS
 # ============================================================================
 
 @app.route('/api/collections', methods=['GET'])
 def list_collections():
-    """List all collections in ChromaDB"""
+    """List all collections in Milvus"""
     try:
-        client = get_chroma_client()
-        collections = client.list_collections()
-        collection_names = [col.name for col in collections]
+        if not connect_milvus():
+            return jsonify({'error': 'Failed to connect to Milvus'}), 500
         
-        logger.info(f"Found collections: {collection_names}")
+        collections = utility.list_collections()
+        logger.info(f"Found collections: {collections}")
         
         return jsonify({
             'success': True,
-            'collections': collection_names
+            'collections': collections
         })
     except Exception as e:
         logger.error(f"Error listing collections: {e}")
@@ -96,10 +94,11 @@ def list_collections():
 def drop_collection(collection_name):
     """Drop a specific collection"""
     try:
-        client = get_chroma_client()
+        if not connect_milvus():
+            return jsonify({'error': 'Failed to connect to Milvus'}), 500
         
         logger.info(f"Dropping collection: {collection_name}")
-        client.delete_collection(name=collection_name)
+        utility.drop_collection(collection_name)
         logger.info(f"Collection {collection_name} dropped successfully")
         
         return jsonify({
@@ -125,6 +124,9 @@ def load_pdf():
         if not server_name:
             return jsonify({'error': 'server_name is required'}), 400
         
+        if not connect_milvus():
+            return jsonify({'error': 'Failed to connect to Milvus'}), 500
+        
         # Construct PDF path
         pdf_path = os.path.join(PDF_DIR, f"{server_name}.pdf")
         
@@ -146,17 +148,15 @@ def load_pdf():
         
         logger.info(f"Split into {len(docs)} chunks")
         
-        # Get embeddings
+        # Get embeddings and create vector store
         embeddings = get_embeddings()
         
-        logger.info(f"Creating/updating vector store in collection: {collection_name}")
-        
-        # Create or add to ChromaDB collection
-        vector_store = Chroma.from_documents(
-            documents=docs,
+        logger.info("Creating vector store...")
+        vector_store = Milvus.from_documents(
+            docs,
             embedding=embeddings,
             collection_name=collection_name,
-            persist_directory=CHROMA_PERSIST_DIR
+            connection_args={"host": MILVUS_HOST, "port": MILVUS_PORT}
         )
         
         logger.info(f"Successfully loaded {server_name} into collection {collection_name}")
@@ -188,6 +188,9 @@ def load_url():
         if not url:
             return jsonify({'error': 'url is required'}), 400
         
+        if not connect_milvus():
+            return jsonify({'error': 'Failed to connect to Milvus'}), 500
+        
         logger.info(f"Loading content from URL: {url}")
         
         # Scrape the web page
@@ -213,22 +216,22 @@ def load_url():
         
         logger.info(f"Split into {len(docs)} chunks")
         
-        # Get embeddings
+        # Get embeddings and create vector store
         embeddings = get_embeddings()
         
         logger.info("Creating vector store...")
-        vector_store = Chroma.from_documents(
-            documents=docs,
+        vector_store = Milvus.from_documents(
+            docs,
             embedding=embeddings,
             collection_name=collection_name,
-            persist_directory=CHROMA_PERSIST_DIR
+            connection_args={"host": MILVUS_HOST, "port": MILVUS_PORT}
         )
         
-        logger.info(f"Successfully loaded URL into collection {collection_name}")
+        logger.info(f"Successfully loaded content from {url} into collection {collection_name}")
         
         return jsonify({
             'success': True,
-            'message': 'Successfully loaded content from URL',
+            'message': f'Successfully loaded content from URL',
             'title': scraped_data['title'],
             'chunks': len(docs),
             'collection': collection_name,
@@ -254,6 +257,9 @@ def load_multiple_urls():
         
         if not urls or not isinstance(urls, list):
             return jsonify({'error': 'urls array is required'}), 400
+        
+        if not connect_milvus():
+            return jsonify({'error': 'Failed to connect to Milvus'}), 500
         
         logger.info(f"Loading content from {len(urls)} URLs")
         
@@ -282,20 +288,18 @@ def load_multiple_urls():
         
         logger.info(f"Split into {len(all_docs)} total chunks")
         
-        # Get embeddings
+        # Get embeddings and create vector store
         embeddings = get_embeddings()
         
         logger.info("Creating vector store...")
-        vector_store = Chroma.from_documents(
-            documents=all_docs,
+        vector_store = Milvus.from_documents(
+            all_docs,
             embedding=embeddings,
             collection_name=collection_name,
-            persist_directory=CHROMA_PERSIST_DIR
+            connection_args={"host": MILVUS_HOST, "port": MILVUS_PORT}
         )
         
         logger.info(f"Successfully loaded {len(scraped_results)} URLs into collection {collection_name}")
-        
-        titles = [result['title'] for result in scraped_results]
         
         return jsonify({
             'success': True,
@@ -303,7 +307,7 @@ def load_multiple_urls():
             'pages_loaded': len(scraped_results),
             'total_chunks': len(all_docs),
             'collection': collection_name,
-            'titles': titles
+            'titles': [r['title'] for r in scraped_results]
         })
         
     except Exception as e:
@@ -315,47 +319,51 @@ def load_multiple_urls():
 # ============================================================================
 
 @app.route('/api/search', methods=['POST'])
-def search():
+def search_documents():
     """Search for relevant documents"""
     try:
         data = request.get_json()
         question = data.get('question')
-        collection_name = data.get('collection_name', 'sales_manuals')
-        server_name = data.get('server_name')  # Optional filter
+        collection_name = data.get('collection_name', 'demo')
+        server_name = data.get('server_name')  # Optional, for filtering
         k = data.get('k', 3)
         
         if not question:
             return jsonify({'error': 'question is required'}), 400
         
+        if not connect_milvus():
+            return jsonify({'error': 'Failed to connect to Milvus'}), 500
+        
         logger.info(f"Searching in collection {collection_name} for: {question}")
         
-        # Get embeddings
+        # Get embeddings and connect to vector store
         embeddings = get_embeddings()
         
-        # Connect to existing collection
-        vector_store = Chroma(
-            collection_name=collection_name,
+        vector_store = Milvus(
             embedding_function=embeddings,
-            persist_directory=CHROMA_PERSIST_DIR
+            collection_name=collection_name,
+            connection_args={"host": MILVUS_HOST, "port": MILVUS_PORT}
         )
         
-        # Perform similarity search
+        # Build filter expression if server_name provided
+        expr = None
         if server_name:
-            # Filter by server name if provided
-            results = vector_store.similarity_search_with_score(
-                question,
-                k=k,
-                filter={"source": f"{server_name}.pdf"}
-            )
-        else:
-            results = vector_store.similarity_search_with_score(question, k=k)
+            pdf_filename = f"{server_name}.pdf"
+            expr = f"source == '{pdf_filename}'"
+            logger.info(f"Filtering by source: {pdf_filename}")
         
-        logger.info(f"Found {len(results)} results")
+        # Perform search
+        if expr:
+            docs = vector_store.similarity_search_with_score(question, k=k, expr=expr)
+        else:
+            docs = vector_store.similarity_search_with_score(question, k=k)
+        
+        logger.info(f"Found {len(docs)} relevant documents")
         
         # Format results
-        formatted_results = []
-        for doc, score in results:
-            formatted_results.append({
+        results = []
+        for doc, score in docs:
+            results.append({
                 'content': doc.page_content,
                 'metadata': doc.metadata,
                 'score': float(score)
@@ -363,12 +371,12 @@ def search():
         
         return jsonify({
             'success': True,
-            'results': formatted_results,
-            'count': len(formatted_results)
+            'results': results,
+            'count': len(results)
         })
         
     except Exception as e:
-        logger.error(f"Error searching: {e}")
+        logger.error(f"Error searching documents: {e}")
         return jsonify({'error': str(e)}), 500
 
 # ============================================================================
@@ -376,7 +384,7 @@ def search():
 # ============================================================================
 
 @app.route('/api/generate', methods=['POST'])
-def generate():
+def generate_response():
     """Generate response from LLM"""
     try:
         data = request.get_json()
@@ -388,22 +396,24 @@ def generate():
         if not prompt:
             return jsonify({'error': 'prompt is required'}), 400
         
-        logger.info(f"Generating response with temperature={temperature}, n_predict={n_predict}")
+        logger.info(f"Generating response for prompt (length: {len(prompt)})")
         
         # Call LLM service
-        llm_url = f"http://{LLAMA_HOST}:{LLAMA_PORT}/completion"
+        llm_url = f'http://{LLAMA_HOST}:{LLAMA_PORT}/completion'
         
         payload = {
-            "prompt": prompt,
-            "temperature": temperature,
-            "n_predict": n_predict,
-            "stream": stream
+            'prompt': prompt,
+            'temperature': temperature,
+            'n_predict': n_predict,
+            'stream': stream
         }
         
         response = requests.post(llm_url, json=payload, timeout=60)
         response.raise_for_status()
         
         result = response.json()
+        
+        logger.info("Successfully generated response")
         
         return jsonify({
             'success': True,
@@ -413,10 +423,7 @@ def generate():
         
     except requests.exceptions.Timeout:
         logger.error("LLM request timed out")
-        return jsonify({'error': 'LLM request timed out'}), 504
-    except requests.exceptions.RequestException as e:
-        logger.error(f"Error calling LLM: {e}")
-        return jsonify({'error': f'Failed to call LLM: {str(e)}'}), 500
+        return jsonify({'error': 'Request timed out. Check LLM service logs.'}), 504
     except Exception as e:
         logger.error(f"Error generating response: {e}")
         return jsonify({'error': str(e)}), 500
@@ -426,43 +433,47 @@ def generate():
 # ============================================================================
 
 @app.route('/health', methods=['GET'])
-def health():
+def health_check():
     """Health check endpoint"""
+    health_status = {
+        'status': 'healthy',
+        'milvus': 'unknown',
+        'llm': 'unknown'
+    }
+    
+    # Check Milvus connection
     try:
-        # Check ChromaDB
-        client = get_chroma_client()
-        client.heartbeat()  # Verify ChromaDB is responsive
-        chroma_status = "connected"
+        if connect_milvus():
+            health_status['milvus'] = 'connected'
+        else:
+            health_status['milvus'] = 'disconnected'
+            health_status['status'] = 'degraded'
     except Exception as e:
-        logger.error(f"ChromaDB health check failed: {e}")
-        chroma_status = "disconnected"
+        health_status['milvus'] = f'error: {str(e)}'
+        health_status['status'] = 'degraded'
     
     # Check LLM service
     try:
-        llm_url = f"http://{LLAMA_HOST}:{LLAMA_PORT}/health"
+        llm_url = f'http://{LLAMA_HOST}:{LLAMA_PORT}/health'
         response = requests.get(llm_url, timeout=5)
-        llm_status = "connected" if response.status_code == 200 else "disconnected"
-    except:
-        llm_status = "disconnected"
+        if response.status_code == 200:
+            health_status['llm'] = 'connected'
+        else:
+            health_status['llm'] = 'disconnected'
+            health_status['status'] = 'degraded'
+    except Exception as e:
+        health_status['llm'] = f'error: {str(e)}'
+        health_status['status'] = 'degraded'
     
-    overall_status = "healthy" if chroma_status == "connected" else "degraded"
-    
-    return jsonify({
-        'status': overall_status,
-        'chromadb': chroma_status,
-        'llm': llm_status
-    }), 200 if overall_status == "healthy" else 503
-
-# ============================================================================
-# ROOT ENDPOINT
-# ============================================================================
+    status_code = 200 if health_status['status'] == 'healthy' else 503
+    return jsonify(health_status), status_code
 
 @app.route('/', methods=['GET'])
-def root():
-    """API documentation"""
+def index():
+    """Root endpoint"""
     return jsonify({
-        'service': 'RAG Backend with ChromaDB',
-        'version': '2.0.0',
+        'service': 'RAG Backend API',
+        'version': '1.1.0',
         'endpoints': {
             'collections': {
                 'GET /api/collections': 'List all collections',
@@ -470,12 +481,12 @@ def root():
             },
             'documents': {
                 'POST /api/load-pdf': 'Load PDF into vector database',
-                'POST /api/load-url': 'Load web page into vector database',
-                'POST /api/load-multiple-urls': 'Load multiple web pages',
+                'POST /api/load-url': 'Load web page content into vector database',
+                'POST /api/load-multiple-urls': 'Load multiple web pages into vector database',
                 'POST /api/search': 'Search for relevant documents'
             },
             'generation': {
-                'POST /api/generate': 'Generate LLM response'
+                'POST /api/generate': 'Generate response from LLM'
             },
             'health': {
                 'GET /health': 'Health check'
@@ -484,13 +495,13 @@ def root():
     })
 
 if __name__ == '__main__':
-    # Create persist directory if it doesn't exist
-    os.makedirs(CHROMA_PERSIST_DIR, exist_ok=True)
+    # Create PDF directory if it doesn't exist
     os.makedirs(PDF_DIR, exist_ok=True)
     
-    logger.info(f"ChromaDB persist directory: {CHROMA_PERSIST_DIR}")
-    logger.info(f"PDF directory: {PDF_DIR}")
-    logger.info("Starting RAG Backend with ChromaDB...")
+    logger.info("Starting RAG Backend Service")
+    logger.info(f"Milvus: {MILVUS_HOST}:{MILVUS_PORT}")
+    logger.info(f"LLM: {LLAMA_HOST}:{LLAMA_PORT}")
+    logger.info(f"PDF Directory: {PDF_DIR}")
     
     app.run(host='0.0.0.0', port=8080, debug=False)
 
