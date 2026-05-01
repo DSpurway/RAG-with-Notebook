@@ -56,7 +56,7 @@ oc set env deployment/rag-webpage BASE_DOMAIN=apps.pXXXX.cecc.ihost.com
 ```bash
 # From OpenShift Web Console:
 # 1. Click "+Add" -> "Import from Git"
-# 2. Git Repo URL: https://github.com/DSpurway/RAG-with-Notebook
+# 2. Git Repo URL: https://github.com/DSpurway/IBM-Power-RAG-Demos
 # 3. Show advanced Git options
 # 4. Context dir: /Part3-RAG-Sales-Manual/RAG-List-Collections
 # 5. Application: Create new "sales-manual-rag-app"

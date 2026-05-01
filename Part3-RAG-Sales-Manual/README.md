@@ -32,7 +32,7 @@ Use the "+Add" option from the lefthand menu to add our first container in this 
 
 ![image](../images/OCP-add-from-git.png)
 
-Point OCP at this repository, which I forked from Marvin's original work, so put "https://github.com/DSpurway/RAG-with-Notebook" as the URL for the Git Repo. But, don't deploy yet, as we need to go a bit deeper, and work with some of the "advanced Git options"
+Point OCP at this repository, which I forked from Marvin's original work, so put "https://github.com/DSpurway/IBM-Power-RAG-Demos" as the URL for the Git Repo. But, don't deploy yet, as we need to go a bit deeper, and work with some of the "advanced Git options"
 
 ![image](../images/DIS-RAG-with-notebook.png)
 
@@ -55,7 +55,7 @@ With that container deployed and the app created, we can move on to add more. Us
 
 ![image](../images/create-next-container.png)
 
-Again, put "https://github.com/DSpurway/RAG-with-Notebook" as the URL for the Git Repo and open the advanced options. We might want to drop elements from our Vector DB, so put "/Part3-RAG-Sales-Manual/RAG-Drop-Collection" as the context directory to deploy that container. Change the name to "rag-drop-collection" and "Create".
+Again, put "https://github.com/DSpurway/IBM-Power-RAG-Demos" as the URL for the Git Repo and open the advanced options. We might want to drop elements from our Vector DB, so put "/Part3-RAG-Sales-Manual/RAG-Drop-Collection" as the context directory to deploy that container. Change the name to "rag-drop-collection" and "Create".
 
 ## 3 Deploy the RAG Loader container
 

@@ -1,7 +1,7 @@
 # Carbon UI Implementation Summary
 
 ## Overview
-Successfully created a professional, modern UI for the RAG-with-Notebook demo using Next.js and IBM's Carbon Design System.
+Successfully created a professional, modern UI for the IBM Power RAG demo using Next.js and IBM's Carbon Design System.
 
 ## What Was Created
 
@@ -134,8 +134,8 @@ docker run -p 3000:3000 carbon-rag-ui
 ### OpenShift
 ```bash
 # Deploy from Git
-oc new-app https://github.com/DSpurway/RAG-with-Notebook \
-  --context-dir=carbon-rag-ui \
+oc new-app https://github.com/DSpurway/IBM-Power-RAG-Demos \
+  --context-dir=Part3-RAG-Sales-Manual/carbon-rag-ui \
   --name=carbon-rag-ui
 
 # Set environment variables
@@ -255,7 +255,7 @@ oc set env deployment/carbon-rag-ui \
 
 ## Conclusion
 
-The Carbon UI implementation successfully modernizes the RAG-with-Notebook demo with a professional, user-friendly interface. It maintains all functionality of the original demo while adding significant improvements in usability, appearance, and maintainability.
+The Carbon UI implementation successfully modernizes the IBM Power RAG demo with a professional, user-friendly interface. It maintains all functionality of the original demo while adding significant improvements in usability, appearance, and maintainability.
 
 The tabbed interface clearly separates the educational content (About), basic demo (Part 2), and enterprise demo (Part 3), making it easy for users to understand and navigate the different aspects of RAG on IBM Power.
 
@@ -265,5 +265,5 @@ With comprehensive documentation, Docker support, and environment-based configur
 
 **Created**: 2026-04-10
 **Version**: 1.0
-**Repository**: https://github.com/DSpurway/RAG-with-Notebook
-**Directory**: carbon-rag-ui/
+**Repository**: https://github.com/DSpurway/IBM-Power-RAG-Demos
+**Directory**: Part3-RAG-Sales-Manual/carbon-rag-ui/

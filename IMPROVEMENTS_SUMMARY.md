@@ -1,7 +1,7 @@
-# RAG-with-Notebook Demo Improvements Summary
+# IBM Power RAG Demo Improvements Summary
 
 ## Overview
-This document summarizes the major improvements made to the RAG-with-Notebook demo, making it more robust, user-friendly, and easier to deploy.
+This document summarizes the major improvements made to the IBM Power RAG demo, making it more robust, user-friendly, and easier to deploy.
 
 ## Key Improvements
 
@@ -287,7 +287,7 @@ Follow the instructions in `Part3-RAG-Sales-Manual/DEPLOYMENT_GUIDE.md`
 
 ## Conclusion
 
-These improvements significantly enhance the RAG-with-Notebook demo by:
+These improvements significantly enhance the IBM Power RAG demo by:
 - Eliminating hardcoded URLs
 - Improving user experience
 - Simplifying deployment

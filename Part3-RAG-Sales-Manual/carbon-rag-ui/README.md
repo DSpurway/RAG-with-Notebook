@@ -1,6 +1,6 @@
 # Carbon RAG UI - Retrieval Augmented Generation Demo
 
-A modern, professional UI for the RAG-with-Notebook demo built with Next.js and IBM's Carbon Design System.
+A modern, professional UI for the IBM Power RAG demo built with Next.js and IBM's Carbon Design System.
 
 ## Features
 
@@ -129,8 +129,8 @@ Deploy using the provided Dockerfile:
 ```bash
 # From OpenShift Web Console:
 # 1. +Add -> Import from Git
-# 2. Git URL: https://github.com/DSpurway/RAG-with-Notebook
-# 3. Context dir: /carbon-rag-ui
+# 2. Git URL: https://github.com/DSpurway/IBM-Power-RAG-Demos
+# 3. Context dir: /Part3-RAG-Sales-Manual/carbon-rag-ui
 # 4. Name: carbon-rag-ui
 # 5. Create
 
@@ -200,12 +200,12 @@ Built with Carbon components that follow WCAG accessibility guidelines.
 
 ## License
 
-This project is part of the RAG-with-Notebook demo and follows the same license.
+This project is part of the IBM Power RAG Demos and follows the same license.
 
 ## Support
 
 For issues or questions:
-- Check the main RAG-with-Notebook README
+- Check the main IBM-Power-RAG-Demos README
 - Review the DEPLOYMENT_GUIDE.md
 - Contact the EMEA AI Squad
 

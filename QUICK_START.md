@@ -1,4 +1,4 @@
-# Quick Start Guide - RAG with Notebook Demo
+# Quick Start Guide - IBM Power RAG Demos
 
 ## For First-Time Users
 
@@ -25,7 +25,7 @@
 
 5. **Deploy Part 3 (Sales Manual RAG)**
    - Use OpenShift Web Console "+Add" → "Import from Git"
-   - Git URL: `https://github.com/DSpurway/RAG-with-Notebook`
+   - Git URL: `https://github.com/DSpurway/IBM-Power-RAG-Demos`
    - Deploy each service with these context directories:
      - `/Part3-RAG-Sales-Manual/RAG-List-Collections` → Name: `rag-list-collections`
      - `/Part3-RAG-Sales-Manual/RAG-Drop-Collection` → Name: `rag-drop-collection`

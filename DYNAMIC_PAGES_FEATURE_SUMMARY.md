@@ -6,7 +6,7 @@ Created: 2026-04-10
 
 ## Overview
 
-This branch adds web scraping capabilities to the RAG-with-Notebook backend, enabling the system to load content from dynamic IBM Docs pages directly into the vector database. This solves the long-standing limitation where only static PDF files could be ingested.
+This branch adds web scraping capabilities to the IBM Power RAG backend, enabling the system to load content from dynamic IBM Docs pages directly into the vector database. This solves the long-standing limitation where only static PDF files could be ingested.
 
 ## Problem Statement
 
