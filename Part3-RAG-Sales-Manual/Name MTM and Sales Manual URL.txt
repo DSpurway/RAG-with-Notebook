@@ -1,0 +1,27 @@
+Full server name | Machine Type and Model Number | Sales Manual URL
+IBM Power E1180 | 9080-HEU | https://www.ibm.com/docs/en/announcements/family-908005-power-e1180-enterprise-server-9080-heu
+IBM Power E1150 | 9043-MRU | https://www.ibm.com/docs/en/announcements/family-904302-power-e1150-enterprise-midrange-technology-based-server-9043-mru
+IBM Power E1050 | 9043-MRX | https://www.ibm.com/docs/en/announcements/power-e1050-enterprise-midrange-technology-based-server
+IBM Power E1080 | 9080-HEX | https://www.ibm.com/docs/en/announcements/power-e1080-enterprise-server
+IBM Power L1022 | 9786-22H | https://www.ibm.com/docs/en/announcements/power-l1022-9786-22h
+IBM Power L1024 | 9786-42H | https://www.ibm.com/docs/en/announcements/power-l1024-9786-42h
+IBM Power S1012 | 9028-21B | https://www.ibm.com/docs/en/announcements/family-9028-01-power-s1012
+IBM Power S1014 | 9105-41B | https://www.ibm.com/docs/en/announcements/power-s1014-9105-41b
+IBM Power S1022 | 9105-22A | https://www.ibm.com/docs/en/announcements/power-s1022-9105-22a
+IBM Power S1024 | 9105-42A | https://www.ibm.com/docs/en/announcements/power-s1024-9105-42a
+IBM Power S1122 | 9824-22A | https://www.ibm.com/docs/en/announcements/family-982401-power-s1122-9824-22a
+IBM Power S1124 | 9824-42A | https://www.ibm.com/docs/en/announcements/family-982402-power-s1124-9824-42a
+IBM Power System E950 | 9040-MR9 | https://www.ibm.com/docs/en/announcements/power-system-e950-9040-mr9
+IBM Power System E980 | 9080-M9S | https://www.ibm.com/docs/en/announcements/power-system-e980-9080-m9s
+IBM Power System H922 | 9223-22S | https://www.ibm.com/docs/en/announcements/power-system-h922-9223-22s-2023-10-24
+IBM Power System H924 | 9223-42S | https://www.ibm.com/docs/en/announcements/power-system-h924-9223-42s-2023-10-24
+IBM Power System IC922 | 9183-22X | https://www.ibm.com/docs/en/announcements/power-system-ic922-9183-22x-2021-12-14
+IBM Power System L922 | 9008-22L | https://www.ibm.com/docs/en/announcements/power-system-l922-9008-22l
+IBM Power System LC921 | 9006-12P | https://www.ibm.com/docs/en/announcements/power-systems-lc921-9006-12p
+IBM Power System LC922 | 9006-22P | https://www.ibm.com/docs/en/announcements/power-system-lc922-9006-22p
+IBM Power System S914 | 9009-41A | https://www.ibm.com/docs/en/announcements/power-system-s914-9009-41a
+IBM Power System S914 | 9009-41G | https://www.ibm.com/docs/en/announcements/power-system-s914-9009-41g-2023-10-24
+IBM Power System S922 | 9009-22A | https://www.ibm.com/docs/en/announcements/power-system-s922-9009-22a
+IBM Power System S922 | 9009-22G | https://www.ibm.com/docs/en/announcements/power-system-s922-9009-22g
+IBM Power System S924 | 9009-42A | https://www.ibm.com/docs/en/announcements/power-system-s924-9009-42a
+IBM Power System S924 | 9009-42G | https://www.ibm.com/docs/en/announcements/power-system-s924-9009-42g

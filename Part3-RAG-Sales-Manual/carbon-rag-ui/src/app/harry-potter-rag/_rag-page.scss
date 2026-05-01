@@ -1,0 +1,106 @@
+@use '@carbon/react/scss/spacing' as *;
+@use '@carbon/react/scss/type' as *;
+@use '@carbon/react/scss/breakpoint' as *;
+@use '@carbon/react/scss/theme' as *;
+
+.rag-page__banner {
+  padding-top: $spacing-05;
+  padding-bottom: $spacing-07 * 4;
+  @include breakpoint-down(md) {
+    padding-top: $spacing-04;
+    padding-bottom: $spacing-07 * 4;
+  }
+}
+
+.rag-page__heading {
+  @include type-style('productive-heading-05');
+}
+
+.rag-page__content {
+  margin-top: $spacing-09;
+  margin-bottom: $spacing-09;
+}
+
+.rag-info-tile {
+  padding: $spacing-05;
+  margin-bottom: $spacing-05;
+
+  h3 {
+    @include type-style('productive-heading-03');
+    margin-bottom: $spacing-05;
+  }
+
+  h4 {
+    @include type-style('productive-heading-02');
+    margin-top: $spacing-06;
+    margin-bottom: $spacing-04;
+  }
+
+  h5 {
+    @include type-style('productive-heading-01');
+    margin-top: $spacing-03;
+    margin-bottom: $spacing-02;
+  }
+
+  p {
+    @include type-style('body-01');
+    margin-bottom: $spacing-05;
+  }
+
+  ul {
+    margin-left: $spacing-06;
+    margin-bottom: $spacing-05;
+
+    li {
+      @include type-style('body-01');
+      margin-bottom: $spacing-03;
+    }
+  }
+}
+
+.tabs-group-content {
+  padding-top: $spacing-05;
+
+  h3 {
+    @include type-style('productive-heading-03');
+    margin-bottom: $spacing-04;
+  }
+
+  h4 {
+    @include type-style('productive-heading-02');
+    margin-bottom: $spacing-03;
+  }
+
+  p {
+    @include type-style('body-01');
+    margin-bottom: $spacing-05;
+  }
+}
+
+// Tile styling
+.cds--tile {
+  margin-bottom: $spacing-05;
+}
+
+// Button spacing
+.cds--btn {
+  margin-right: $spacing-03;
+}
+
+// Notification styling
+.cds--inline-notification {
+  margin-bottom: $spacing-05;
+}
+
+// Text area styling
+.cds--text-area {
+  margin-bottom: $spacing-03;
+}
+
+// Select and input styling
+.cds--select,
+.cds--text-input {
+  margin-bottom: $spacing-03;
+}
+
+// Made with Bob

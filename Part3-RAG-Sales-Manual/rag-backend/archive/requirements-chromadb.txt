@@ -1,0 +1,38 @@
+# Web Framework
+Flask==3.0.0
+flask-cors==4.0.0
+gunicorn==21.2.0
+
+# Vector Database - OpenSearch
+opensearch-py==3.0.0
+
+# Vector Database - ChromaDB (legacy, keeping for reference)
+# chromadb>=0.5.23
+
+# LangChain and RAG
+langchain==0.1.0
+langchain-community==0.0.10
+langchain-core==0.1.10
+
+# Embeddings
+# Using versions compatible with IBM ppc64le wheels
+# sentence-transformers 5.4.0 requires transformers>=4.41.0
+# transformers>=4.41.0 requires huggingface-hub>=0.23.0 for is_offline_mode
+sentence-transformers>=3.0.0
+transformers>=4.41.0
+huggingface-hub>=0.23.0
+torch==2.1.2
+
+# Document Processing
+pypdf==3.17.4
+pypdf2==3.0.1
+
+# Web Scraping (optional)
+beautifulsoup4==4.12.2
+lxml==5.1.0
+
+# HTTP Client
+requests>=2.32.0
+
+# Utilities
+python-dotenv==1.0.0

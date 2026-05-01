@@ -1,0 +1,61 @@
+.rag-page {
+  padding: 2rem 0;
+  
+  &__banner {
+    padding-bottom: 2rem;
+  }
+  
+  &__heading {
+    font-weight: 600;
+    margin-top: 1rem;
+  }
+  
+  &__content {
+    margin-top: 2rem;
+  }
+}
+
+.tile-spacing {
+  margin-bottom: 1rem;
+  padding: 1.5rem;
+}
+
+// DataTable customizations
+.cds--data-table {
+  font-size: 0.875rem;
+  
+  td {
+    vertical-align: middle;
+  }
+}
+
+// Tag styling
+.cds--tag {
+  margin-right: 0.5rem;
+}
+
+// Modal content spacing
+.cds--modal-content p {
+  margin-bottom: 0.75rem;
+  
+  strong {
+    font-weight: 600;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 672px) {
+  .rag-page {
+    padding: 1rem 0;
+    
+    &__banner {
+      padding-bottom: 1rem;
+    }
+  }
+  
+  .tile-spacing {
+    padding: 1rem;
+  }
+}
+
+// Made with Bob

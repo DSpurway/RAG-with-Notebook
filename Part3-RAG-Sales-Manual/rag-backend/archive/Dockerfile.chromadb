@@ -1,0 +1,110 @@
+# Multi-stage build for RAG Backend Service with ChromaDB
+FROM registry.access.redhat.com/ubi9/python-312:latest AS builder
+
+USER root
+
+# Install system dependencies required for building Python packages
+# Including Rust for packages like bcrypt that require it
+RUN dnf install -y \
+    gcc \
+    gcc-c++ \
+    git \
+    make \
+    python3.12-devel \
+    rust \
+    cargo \
+    wget \
+    && dnf clean all
+
+# Build and install newer sqlite3 for ChromaDB (requires >= 3.35.0)
+RUN cd /tmp && \
+    wget https://www.sqlite.org/2024/sqlite-autoconf-3450100.tar.gz && \
+    tar xzf sqlite-autoconf-3450100.tar.gz && \
+    cd sqlite-autoconf-3450100 && \
+    ./configure --prefix=/usr/local && \
+    make && \
+    make install && \
+    cd / && \
+    rm -rf /tmp/sqlite-autoconf-3450100* && \
+    echo "/usr/local/lib" > /etc/ld.so.conf.d/sqlite3.conf && \
+    ldconfig
+
+# Create app directory
+WORKDIR /app
+
+# Copy requirements first for better caching
+COPY requirements.txt .
+
+# Install Python dependencies
+# Use IBM Power-optimized wheels where available for better performance
+# Install all available packages from IBM wheels FIRST to avoid build failures
+# Note: sqlite3 3.45.1 was built from source above for ChromaDB compatibility
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
+    pip install --no-cache-dir --prefer-binary \
+        torch openblas sentence-transformers transformers onnxruntime chroma-hnswlib grpcio \
+        lxml numpy bcrypt httptools uvloop \
+        --extra-index-url=https://wheels.developerfirst.ibm.com/ppc64le/linux && \
+    grep -Ev "^(torch|sentence-transformers|transformers|huggingface-hub|tokenizers|grpcio|onnxruntime|chroma-hnswlib|lxml|numpy|bcrypt|httptools|uvloop)" requirements.txt > requirements-base.txt && \
+    pip install --no-cache-dir --upgrade --prefer-binary -r requirements-base.txt
+
+# Copy application code
+COPY app.py .
+COPY web_scraper.py .
+COPY docling_config.py .
+COPY docling_converter.py .
+COPY hierarchical_chunker.py .
+COPY token_utils.py .
+
+# Create PDF directory
+RUN mkdir -p /app/pdfs
+
+# ============================================================================
+# Production Stage
+# ============================================================================
+FROM registry.access.redhat.com/ubi9/python-312:latest
+
+USER root
+
+# Install only runtime dependencies
+# Copy sqlite3 library from builder
+RUN dnf install -y \
+    libgomp \
+    && dnf clean all
+
+# Copy custom-built sqlite3 from builder
+COPY --from=builder /usr/local/lib/libsqlite3.* /usr/local/lib/
+COPY --from=builder /usr/local/bin/sqlite3 /usr/local/bin/
+RUN echo "/usr/local/lib" > /etc/ld.so.conf.d/sqlite3.conf && ldconfig
+
+WORKDIR /app
+
+# Copy installed packages from builder
+COPY --from=builder /opt/app-root/lib/python3.12/site-packages /opt/app-root/lib/python3.12/site-packages
+COPY --from=builder /opt/app-root/bin /opt/app-root/bin
+
+# Copy application files
+COPY --from=builder /app/app.py .
+COPY --from=builder /app/web_scraper.py .
+COPY --from=builder /app/docling_config.py .
+COPY --from=builder /app/docling_converter.py .
+COPY --from=builder /app/hierarchical_chunker.py .
+COPY --from=builder /app/token_utils.py .
+COPY --from=builder /app/pdfs /app/pdfs
+
+# Environment variables with defaults
+ENV CHROMA_PERSIST_DIR=/app/chroma_db \
+    LLAMA_HOST=llama-service \
+    LLAMA_PORT=8080 \
+    PDF_DIR=/app/pdfs \
+    CORS_ORIGIN=* \
+    PYTHONUNBUFFERED=1
+
+# Expose port
+EXPOSE 8080
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD python -c "import requests; requests.get('http://localhost:8080/health', timeout=5)"
+
+# Run with gunicorn for production
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "2", "--threads", "4", "--timeout", "120", "--access-logfile", "-", "--error-logfile", "-", "app:app"]
